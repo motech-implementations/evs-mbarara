@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender class="org.apache.log4j.ConsoleAppender" name="CONSOLE">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/>
+        </layout>
+    </appender>
+
+    <logger name="org.motechproject.evs-mbarara.service.impl.ZetesServiceImpl">
+        <level value="INFO"/>
+    </logger>
+
+    <logger name="org.motechproject.evs-mbarara.web.ZetesController">
+        <level value="WARN"/>
+    </logger>
+
+    <root>
+        <priority value="ERROR"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</log4j:configuration>

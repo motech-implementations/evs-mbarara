@@ -1,0 +1,31 @@
+<div ng-controller="EvsMbararaBaseCtrl" id="inner-center" class="inner-center ui-layout-center ui-layout-pane ui-layout-pane-center">
+    <div class="header-footer-breadcrumb">
+        <ul class="breadcrumb" role="navigation">
+            <li><a role="menu" href=".">{{msg('server.home')}}</a></li>
+            <li><a role="menu" href="#/evsMbarara/">{{msg('evsMbarara')}}</a></li>
+            <li ng-show="active('#/evsMbarara/reports')" ng-class="active('#/evsMbarara/reports')">{{msg('evsMbarara.reports')}}</li>
+            <li ng-show="active('#/evsMbarara/screening')" ng-class="active('#/evsMbarara/screening')">{{msg('evsMbarara.screening')}}</li>
+            <li ng-show="active('#/evsMbarara/primeVaccination')" ng-class="active('#/evsMbarara/primeVaccination')">{{msg('evsMbarara.primeVaccination')}}</li>
+            <li ng-show="active('#/evsMbarara/clinicVisitSchedule')" ng-class="active('#/evsMbarara/clinicVisitSchedule')">{{msg('evsMbarara.clinicVisitSchedule')}}</li>
+            <li ng-show="active('#/evsMbarara/reschedule')" ng-class="active('#/evsMbarara/reschedule')">{{msg('evsMbarara.reschedule')}}</li>
+            <li ng-show="active('#/evsMbarara/unscheduledVisit')" ng-class="active('#/evsMbarara/unscheduledVisit')">{{msg('evsMbarara.unscheduledVisit')}}</li>
+            <li ng-show="active('#/mds/dataBrowser')" ng-class="active('#/mds/dataBrowser')">{{msg('evsMbarara.' + selectedTab)}}</li>
+            <li ng-show="active('#/evsMbarara/settings')" ng-class="active('#/evsMbarara/settings')">{{msg('evsMbarara.settings.title')}}</li>
+        </ul>
+    </div>
+    <div class="header-footer" style="overflow:auto;">
+        <ul id="content-tabs" class="nav nav-tabs">
+            <li ng-hide="active('#/evsMbarara/settings')" ng-class="active('#/evsMbarara/' + tab) || active(tab === selectedTab ? '#/mds/dataBrowser' : ('#/evsMbarara/' + tab))" ng-repeat="tab in EVS_MBARARA_AVAILABLE_TABS">
+                <a id="{{tab + '-tab'}}" href="#/evsMbarara/{{tab}}">{{msg('evsMbarara.' + tab)}}</a>
+            </li>
+            <li ng-show="active('#/evsMbarara/settings')" ng-class="active('#/evsMbarara/settings')"><a href="#/evsMbarara/settings">{{msg('evsMbarara.settings.title')}}</a></li>
+        </ul>
+    </div>
+    <div class="ui-layout-content">
+        <div class="tab-content" id="tab-content">
+            <div id="main-content" class="active">
+                <div ng-view></div>
+            </div>
+        </div>
+    </div>
+</div>

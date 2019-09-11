@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+
+    <mvc:annotation-driven/>
+    <context:annotation-config/>
+    <context:component-scan base-package="org.motechproject.evsmbarara"/>
+
+    <bean class="org.motechproject.osgi.web.ModuleRegistrationData" id="moduleRegistrationData">
+        <constructor-arg name="moduleName" value="evsMbarara"/>
+        <constructor-arg name="url" value="../evs-mbarara/resources/index.html"/>
+        <constructor-arg name="angularModules">
+            <list>
+                <value>evsMbarara</value>
+            </list>
+        </constructor-arg>
+        <constructor-arg name="i18n">
+            <map>
+                <entry key="messages" value="../evs-mbarara/resources/messages/"/>
+            </map>
+        </constructor-arg>
+        <property name="settingsURL" value="/evsMbarara/settings"/>
+        <property name="defaultURL" value="/evsMbarara/welcomeTab"/>
+        <property name="roleForAccess">
+            <list>
+                <value>manageEvsMbarara</value>
+                <value>evsMbararaSubjectsTab</value>
+                <value>evsMbararaScreeningBookingTab</value>
+                <value>evsMbararaPrimeVaccinationBookingTab</value>
+                <value>evsMbararaClinicVisitBookingTab</value>
+                <value>evsMbararaVisitRescheduleBookingTab</value>
+                <value>unscheduledVisitsTab</value>
+                <value>evsMbararaAdvancedSettings</value>
+                <value>evsMbararaReportsTab</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean autowire="byType" class="org.motechproject.server.config.SettingsFacade"
+          id="evsMbararaSettings">
+        <property name="configFiles">
+            <list>
+                <value>classpath:evs-mbarara.properties</value>
+            </list>
+        </property>
+        <property name="rawConfigFiles">
+            <list>
+                <value>classpath:evs-mbarara-config.json</value>
+                <value>classpath:custom-ui.js</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+          id="multipartResolver">
+        <property name="maxUploadSize" value="10000000"/>
+    </bean>
+
+</beans>

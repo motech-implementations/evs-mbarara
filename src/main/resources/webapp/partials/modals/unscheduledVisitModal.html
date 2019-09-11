@@ -1,0 +1,61 @@
+<div class="modal fade" id="unscheduledVisitModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 ng-if="form.type == 'add'" class="modal-title">{{msg('evsMbarara.uncheduledVisit.add')}}</h4>
+                <h4 ng-if="form.type == 'edit'" class="modal-title">{{msg('evsMbarara.uncheduledVisit.update')}}</h4>
+            </div>
+            <div ng-if="form.dto">
+                <div class="modal-body unscheduled-visit-modal-body">
+                    <div class="evs-mbarara input-group unscheduled-visit-modal">
+                        <span class="left input-group-addon">{{msg('evsMbarara.uncheduledVisit.participantId')}}</span>
+                        <select class="form-control" ui-select2 id="participantSelect" ng-model="form.dto.participantId">
+                            <option value="">{{'- ' + msg('evsMbarara.choose') + ' -'}}</option>
+                            <option ng-repeat="participant in participants" value="{{participant.subjectId}}" ng-selected="{{participant.subjectId == form.dto.participantId}}">{{participant.subjectId}}</option>
+                        </select>
+                        <span class="input-group-addon validator" ng-class="{'alert-success': form.dto.participantId}"><i class="fa fa-fw fa-check"></i></span>
+                    </div>
+                    <div class="evs-mbarara input-group unscheduled-visit-modal">
+                        <span class="left input-group-addon">{{msg('evsMbarara.date')}}</span>
+                        <input id="dateInput" type="text" class="form-control datepicker" readonly='true' evs-mbarara-date-picker for-date="{{form.dto.date}}" placeholder="{{msg('evsMbarara.datePlaceholder')}}" ng-model="form.dto.date">
+                        <span class="input-group-addon validator" ng-class="{'alert-danger': form.dto.date === '', 'alert-success': form.dto.date}"><i class="fa fa-fw fa-check"></i></span>
+                    </div>
+                    <div class="evs-mbarara input-group unscheduled-visit-modal">
+                        <span class="left input-group-addon">{{msg('evsMbarara.startTime')}}</span>
+                        <input id="startTimeInput" type="text" class="form-control" mds-time-picker placeholder="{{msg('evsMbarara.startTimePlaceholder')}}" ng-model="form.dto.startTime">
+                        <span class="input-group-addon validator" ng-class="{'alert-danger': form.dto.startTime === '', 'alert-success': form.dto.startTime}"><i class="fa fa-fw fa-check"></i></span>
+                    </div>
+                    <div class="evs-mbarara input-group">
+                        <span class="left input-group-addon">{{msg('evsMbarara.uncheduledVisit.purpose')}}</span>
+                        <input id="purposeInput" type="text" class="form-control" placeholder="{{msg('evsMbarara.uncheduledVisit.purposePlaceholder')}}" aria-describedby="basic-addon1" ng-model="form.dto.purpose">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button id="saveBtn" type="button" class="btn btn-primary ng-binding" ng-disabled="!formIsFilled()" ng-click="saveUnscheduledVisit(false)">
+                            <i class="fa fa-fw fa-save"></i> {{msg('evsMbarara.save')}}
+                        </button>
+                        <button id="cancelBtn" type="button" class="btn btn-default" data-dismiss="modal">{{msg('evsMbarara.cancel')}}</button>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="!form.dto">
+                <div ng-if="form.type == 'add'" class="modal-body">
+                    {{msg('evsMbarara.uncheduledVisit.createSuccessful')}}
+                </div>
+                <div ng-if="form.type == 'edit'" class="modal-body">
+                    {{msg('evsMbarara.uncheduledVisit.updateSuccessful')}}
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group" role="group">
+                        <button id="printBtn" type="button" ng-hide="true" class="btn btn-primary ng-binding" ng-click="printFrom('updated')">
+                            <i class="fa fa-fw fa-print"></i> {{msg('evsMbarara.printCard')}}
+                        </button>
+                        <button id="closeBtn" type="button" class="btn btn-default" data-dismiss="modal">{{msg('evsMbarara.close')}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

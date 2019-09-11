@@ -1,0 +1,38 @@
+[
+  {
+    "roleName": "EVS Mbarara Send Subject via API",
+    "permissionNames": [
+      "participantRegistration"
+    ]
+  },
+  {
+    "roleName": "EVS Mbarara Administrator",
+    "permissionNames": [
+      "manageEvsMbarara",
+      "evsMbararaSubjectsTab",
+      "evsMbararaScreeningBookingTab",
+      "evsMbararaPrimeVaccinationBookingTab",
+      "evsMbararaClinicVisitBookingTab",
+      "evsMbararaVisitRescheduleBookingTab",
+      "unscheduledVisitsTab",
+      "evsMbararaAdvancedSettings",
+      "evsMbararaReportsTab",
+      "viewUI"
+    ]
+  },
+  {
+    "roleName": "EVS Mbarara User",
+    "permissionNames": [
+      "manageEvsMbarara",
+      "evsMbararaSubjectsTab",
+      "evsMbararaScreeningBookingTab",
+      "evsMbararaPrimeVaccinationBookingTab",
+      "evsMbararaClinicVisitBookingTab",
+      "evsMbararaVisitRescheduleBookingTab",
+      "unscheduledVisitsTab",
+      "evsMbararaReportsTab",
+      "viewUI"
+    ]
+  }
+]
+

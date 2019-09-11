@@ -1,0 +1,55 @@
+<div class="row">
+
+    <table class="table table-bundles table-bordered table-striped table-lightblue table-condensed table-centered margin-before2">
+        <thead>
+        <tr>
+            <th>{{msg('evsMbarara.schedule.subjectId')}}</th>
+            <th>{{msg('evsMbarara.schedule.subjectName')}}</th>
+            <th>{{msg('evsMbarara.schedule.primeVac')}}</th>
+            <th>{{msg('evsMbarara.schedule.nextVisit')}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="col-md-2">
+                <select class="form-control" ui-select2 id="subjectId" ng-model="selectedSubject" ng-change="subjectChanged()" ng-options="visit.subject as visit.subject.subjectId for visit in screeningVisits">
+                    <option value=""></option>
+                </select>
+            </td>
+            <td class="col-md-2">
+                {{selectedSubject.name}}
+            </td>
+            <td class="col-md-2">
+                <div class="evs-mbarara input-group">
+                    <input type="text" id="primeVacDateInput" style="text-align:center;" class="form-control datepicker" readonly="true" evs-mbarara-date-picker="" min="dateRange.min" max="dateRange.max" ng-model="primeVac.date">
+                    <span class="input-group-btn">
+                            <button id="todayBtn" type="button" class="btn btn-primary" ng-disabled="!checkSubject() || isTodayButtonDisabled()" ng-click="setPrimeVacDateToCurrentDate()">Today</button>
+                    </span>
+                </div>
+                <div class="input-group">
+                    <label for="ignoreDateLimitationInput" class="control-label">
+                        <span>{{msg('evsMbarara.ignoreDateLimitation')}}</span>
+                    </label>
+                    <input id="ignoreDateLimitationInput" type="checkbox" style="margin-left: 5px" class="move-left" ng-model="ignoreDateLimitation">
+                </div>
+            </td>
+            <td id="nextVisit" class="col-md-2">
+                {{nextVisit}}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <button id="saveBtn" type="button" class="btn btn-success" ng-disabled="!checkSubjectAndPrimeVacDate()" ng-click="save()">
+        <i class="fa fa-fw fa-save"></i> {{msg('evsMbarara.schedule.save')}}
+    </button>
+
+    <button id="printBtn" type="button" class="btn btn-primary" ng-disabled="!checkSubjectAndPrimeVacDate()" ng-click="print()">
+        <i class="fa fa-fw fa-print"></i> {{msg('evsMbarara.schedule.print')}}
+    </button>
+
+    <button id="cancelBtn" type="button" class="btn btn-default" ng-click="cancel()">
+        {{msg('evsMbarara.schedule.cancel')}}
+    </button>
+
+</div>

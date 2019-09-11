@@ -1,0 +1,14 @@
+{
+  "clinicMainFields": ["Site Id", "Location", "Max Capacity By Day", "Max Screening Visits", "Max Prime Visits", "Max Booster Visits"],
+  "clinicExtendedFields": ["Amount of Rooms", "Max Prime First Follow Up Visits", "Max Prime Second Follow Up Visits",
+    "Max Prime Third Follow Up Visits", "Max Booster First Follow Up Visits",  "Max Three Months Post Prime Visits",
+    "Max Six Months Post Prime Visits", "Max Twelve Months Post Prime Visits", "Max Twenty Four Months Post Prime Visits",
+    "Max Thirty Six Months Post Prime Visits", "Max Forty Eight Months Post Prime Visits", "Max Sixty Months Post Prime Visits"],
+  "boosterRelatedVisits" :["D63 Boost Vaccination First Follow-up Visit"],
+  "showWarnings":true,
+  "zetesUrl": "",
+  "zetesUsername": "",
+  "zetesPassword": "",
+  "startTime": "",
+  "enableZetesJob":false
+}
