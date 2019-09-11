@@ -1,6 +1,6 @@
 package org.motechproject.evsmbarara.web.domain;
 
-import org.motechproject.evsmbarara.domain.DateFilter;
+import org.motechproject.evsmbarara.domain.enums.DateFilter;
 
 import java.util.List;
 

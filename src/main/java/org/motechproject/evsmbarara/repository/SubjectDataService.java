@@ -19,15 +19,8 @@ import java.util.List;
  */
 public interface SubjectDataService extends MotechDataService<Subject> {
 
-    @Lookup(name = "Find By Name")
-    List<Subject> findByName(@LookupField(name = "name",
-            customOperator = Constants.Operators.MATCHES_CASE_INSENSITIVE) String name);
-
     @Lookup(name = "Find unique By Participant Id")
     Subject findBySubjectId(@LookupField(name = "subjectId") String subjectId);
-
-    @Lookup(name = "Find By Modified")
-    List<Subject> findByModified(@LookupField(name = "changed") Boolean modified);
 
     @Lookup(name = "Find By Primer Vaccination Date Range")
     List<Subject> findByPrimerVaccinationDateRange(@LookupField(name = "primerVaccinationDate")
@@ -45,10 +38,6 @@ public interface SubjectDataService extends MotechDataService<Subject> {
     List<Subject> findByBoosterVaccinationDate(
             @LookupField(name = "boosterVaccinationDate") LocalDate dateRange);
 
-    @Lookup(name = "Find By Address")
-    List<Subject> findByAddress(@LookupField(name = "address",
-            customOperator = Constants.Operators.MATCHES_CASE_INSENSITIVE) String address);
-
     @Lookup(name = "Find By Participant Id")
     List<Subject> findByMatchesCaseInsensitiveSubjectId(@LookupField(name = "subjectId",
             customOperator = Constants.Operators.MATCHES_CASE_INSENSITIVE) String subjectId);
@@ -65,8 +54,4 @@ public interface SubjectDataService extends MotechDataService<Subject> {
     List<Subject> findSubjectByVisitTypeAndActualDateRange(
             @LookupField(name = "visits.type") VisitType visitType,
             @LookupField(name = "visits.date")  Range<LocalDate> date);
-
-    @Lookup
-    List<Subject> findBySiteName(@LookupField(name = "siteName",
-            customOperator = Constants.Operators.MATCHES_CASE_INSENSITIVE) String siteName);
 }

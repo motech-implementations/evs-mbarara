@@ -1,4 +1,4 @@
-package org.motechproject.evsmbarara.domain;
+package org.motechproject.evsmbarara.domain.enums;
 
 import org.joda.time.LocalDate;
 import org.motechproject.commons.api.Range;

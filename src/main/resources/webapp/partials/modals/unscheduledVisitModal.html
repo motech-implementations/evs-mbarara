@@ -21,11 +21,6 @@
                         <input id="dateInput" type="text" class="form-control datepicker" readonly='true' evs-mbarara-date-picker for-date="{{form.dto.date}}" placeholder="{{msg('evsMbarara.datePlaceholder')}}" ng-model="form.dto.date">
                         <span class="input-group-addon validator" ng-class="{'alert-danger': form.dto.date === '', 'alert-success': form.dto.date}"><i class="fa fa-fw fa-check"></i></span>
                     </div>
-                    <div class="evs-mbarara input-group unscheduled-visit-modal">
-                        <span class="left input-group-addon">{{msg('evsMbarara.startTime')}}</span>
-                        <input id="startTimeInput" type="text" class="form-control" mds-time-picker placeholder="{{msg('evsMbarara.startTimePlaceholder')}}" ng-model="form.dto.startTime">
-                        <span class="input-group-addon validator" ng-class="{'alert-danger': form.dto.startTime === '', 'alert-success': form.dto.startTime}"><i class="fa fa-fw fa-check"></i></span>
-                    </div>
                     <div class="evs-mbarara input-group">
                         <span class="left input-group-addon">{{msg('evsMbarara.uncheduledVisit.purpose')}}</span>
                         <input id="purposeInput" type="text" class="form-control" placeholder="{{msg('evsMbarara.uncheduledVisit.purposePlaceholder')}}" aria-describedby="basic-addon1" ng-model="form.dto.purpose">

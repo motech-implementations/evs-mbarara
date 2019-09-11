@@ -1,14 +1,16 @@
 {
-  "clinicMainFields": ["Site Id", "Location", "Max Capacity By Day", "Max Screening Visits", "Max Prime Visits", "Max Booster Visits"],
-  "clinicExtendedFields": ["Amount of Rooms", "Max Prime First Follow Up Visits", "Max Prime Second Follow Up Visits",
-    "Max Prime Third Follow Up Visits", "Max Booster First Follow Up Visits",  "Max Three Months Post Prime Visits",
-    "Max Six Months Post Prime Visits", "Max Twelve Months Post Prime Visits", "Max Twenty Four Months Post Prime Visits",
-    "Max Thirty Six Months Post Prime Visits", "Max Forty Eight Months Post Prime Visits", "Max Sixty Months Post Prime Visits"],
-  "boosterRelatedVisits" :["D63 Boost Vaccination First Follow-up Visit"],
-  "showWarnings":true,
-  "zetesUrl": "",
-  "zetesUsername": "",
-  "zetesPassword": "",
-  "startTime": "",
-  "enableZetesJob":false
+  "boosterRelatedVisits" :["D57 Sub-study visit", "D59 Sub-study visit", "D63 Phone call"],
+  "subStudyVisits": ["D1 Sub-study visit", "D3 Sub-study visit", "D57 Sub-study visit", "D59 Sub-study visit"],
+  "enableReportJob": false,
+  "reportCalculationStartTime": "00:01",
+  "lastCalculationDateForIvrReports": null,
+  "ivrAndSmsStatisticReportsToUpdate": [],
+  "sendIvrCalls": true,
+  "ivrSettingsName": "Voto",
+  "apiKey": null,
+  "statusCallbackUrl": null,
+  "sendSmsIfVoiceFails": true,
+  "detectVoiceMail": true,
+  "retryAttempts": 3,
+  "retryDelay": 15
 }

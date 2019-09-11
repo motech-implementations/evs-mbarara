@@ -21,20 +21,11 @@ $scope.showLookupButton = true;
 
 if ($scope.selectedEntity.name === "Participant") {
     $rootScope.selectedTab = "subjects";
-} else {
-    $rootScope.selectedTab = "visitLimitation";
-    $scope.showFieldsButton = false;
-    $scope.showImportButton = false;
-    $scope.showExportButton = false;
-    $scope.showViewTrashButton = false;
-    $scope.showFiltersButton = false;
 }
 
 var importCsvModal = '../evs-mbarara/resources/partials/modals/import-csv.html';
-var editSubjectModal = '../evs-mbarara/resources/partials/modals/edit-subject.html';
 
 $scope.customModals.push(importCsvModal);
-$scope.customModals.push(editSubjectModal);
 
 $scope.importEntityInstances = function() {
     $('#importSubjectModal').modal('show');
@@ -105,35 +96,11 @@ $scope.exportInstance = function() {
         });
 };
 
-$scope.showAdvanced = false;
-$scope.advancedButtonIndex = 6;
-
-$scope.showOrHideAdvanced = function() {
-    var i;
-    $scope.showAdvanced = !$scope.showAdvanced;
-
-    for (i = $scope.advancedButtonIndex + 1; i < $scope.fields.length; i += 1) {
-        $scope.fields[i].nonDisplayable = !$scope.showAdvanced;
-    }
-};
-
-$scope.getAdvancedButtonLabel = function() {
-    if ($scope.showAdvanced) {
-        return $scope.msg('evsMbarara.hideAdvanced');
-    } else {
-        return $scope.msg('evsMbarara.showAdvanced');
-    }
-};
-
 $scope.editInstance = function(id, module, entityName) {
     blockUI();
     $scope.setHiddenFilters();
 
-    if (entityName === "Clinic") {
-        $scope.instanceEditMode = false;
-    } else {
-        $scope.instanceEditMode = true;
-    }
+    $scope.instanceEditMode = true;
 
     $scope.setModuleEntity(module, entityName);
     $scope.loadedFields = Instances.selectInstance({
@@ -145,58 +112,6 @@ $scope.editInstance = function(id, module, entityName) {
             $scope.currentRecord = data;
             $scope.fields = data.fields;
 
-            if (entityName === "Clinic") {
-                $http.get('../evs-mbarara/evs-mbarara-config')
-                .success(function(response) {
-                    var i, j, fieldsMap = {},
-                        clinicMainFields = response.clinicMainFields,
-                        clinicExtendedFields = response.clinicExtendedFields,
-                        showAdvancedButton = {
-                            'name': 'showAdvanced',
-                            'displayName': '',
-                            'tooltip': '',
-                            'value': '',
-                            'type': {
-                                'displayName': 'mds.field.string'
-                            },
-                            'required': false,
-                            'nonEditable': false,
-                            'nonDisplayable': false
-                        };
-
-                    $scope.showAdvanced = false;
-
-                    for (i = 0; i < $scope.fields.length; i += 1) {
-                        if ($scope.fields[i].name === "location" || $scope.fields[i].name === "siteId") {
-                            $scope.fields[i].nonEditable = true;
-                        }
-                        fieldsMap[$scope.fields[i].displayName] = $scope.fields[i];
-                    }
-
-                    $scope.fields = [];
-
-                    for (i = 0; i < clinicMainFields.length; i += 1) {
-                        $scope.fields[i] = fieldsMap[clinicMainFields[i]];
-                    }
-
-                    $scope.advancedButtonIndex = i;
-                    $scope.fields[i] = showAdvancedButton;
-
-                    for (j = 0; j < clinicExtendedFields.length; j += 1) {
-                        i += 1;
-                        $scope.fields[i] = fieldsMap[clinicExtendedFields[j]];
-                        $scope.fields[i].nonDisplayable = true;
-                    }
-                });
-            } else if (entityName === "Participant") {
-                var i;
-                for (i = 0; i < $scope.fields.length; i += 1) {
-                    if ($scope.fields[i].name === "changed") {
-                        $scope.fields[i].nonDisplayable = true;
-                    }
-                }
-            }
-
             unblockUI();
         }, angularHandler('mds.error', 'mds.error.cannotUpdateInstance'));
 };
@@ -207,10 +122,6 @@ $scope.addEntityInstanceDefault = function () {
     var values = $scope.currentRecord.fields;
     angular.forEach (values, function(value, key) {
         value.value = value.value === 'null' ? null : value.value;
-
-        if (value.name === "changed") {
-            value.value = true;
-        }
     });
 
     $scope.currentRecord.$save(function() {
@@ -228,19 +139,8 @@ $scope.addEntityInstance = function () {
             input.trigger('input');
         }
 
-        $http.get('../evs-mbarara/evs-mbarara-config')
-            .success(function(response){
-                if(response.showWarnings) {
-                    $('#editSubjectModal').modal('show');
-                } else {
-                    $scope.addEntityInstanceDefault();
-                }
-            })
-            .error(function(response) {
-                $('#editSubjectModal').modal('show');
-            });
+        $scope.addEntityInstanceDefault();
     } else {
-        $scope.fields.splice($scope.advancedButtonIndex, 1);
         $scope.addEntityInstanceDefault();
     }
 };
@@ -258,9 +158,7 @@ var isPhoneNumberForm = false;
 $scope.loadEditValueFormDefault = $scope.loadEditValueForm;
 
 $scope.loadEditValueForm = function (field) {
-    if (field.name === 'showAdvanced') {
-        return '../evs-mbarara/resources/partials/widgets/field-show-advanced.html';
-    } else if (field.name === 'phoneNumber') {
+    if (field.name === 'phoneNumber') {
         isPhoneNumberForm = true;
         return '../evs-mbarara/resources/partials/widgets/field-phone-number.html';
     } else if (field.name === 'visits') {

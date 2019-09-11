@@ -27,13 +27,13 @@ public class VisitScheduleOffset {
     private Integer timeOffset;
 
     @UIDisplayable(position = 2)
-    @Field(required = true)
+    @Field
     @Getter
     @Setter
     private Integer earliestDateOffset;
 
     @UIDisplayable(position = 3)
-    @Field(required = true)
+    @Field
     @Getter
     @Setter
     private Integer latestDateOffset;

@@ -6,20 +6,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum VisitType {
-    SCREENING("Screening"),
-    PRIME_VACCINATION_DAY("D0 Prime Vaccination Day"),
-    PRIME_VACCINATION_FIRST_FOLLOW_UP_VISIT("D7 Prime Vaccination First Follow-up Visit"),
-    PRIME_VACCINATION_SECOND_FOLLOW_UP_VISIT("D14 Prime Vaccination Second Follow-up Visit"),
-    PRIME_VACCINATION_THIRD_FOLLOW_UP_VISIT("D28 Prime Vaccination Third Follow-up Visit"),
-    BOOST_VACCINATION_DAY("D56 Boost Vaccination Day"),
-    BOOST_VACCINATION_FIRST_FOLLOW_UP_VISIT("D63 Boost Vaccination First Follow-up Visit"),
-    THREE_MONTHS_POST_PRIME_VISIT("3 Months Post Prime Visit"),
-    SIX_MONTHS_POST_PRIME_VISIT("6 Months Post Prime Visit"),
-    TWELVE_MONTHS_POST_PRIME_VISIT("12 Months Post Prime Visit"),
-    TWENTY_FOUR_MONTHS_POST_PRIME_VISIT("24 Months Post Prime Visit"),
-    THIRTY_SIX_MONTHS_POST_PRIME_VISIT("36 Months Post Prime Visit"),
-    FORTY_EIGHT_MONTHS_POST_PRIME_VISIT("48 Months Post Prime Visit"),
-    SIXTY_MONTHS_POST_PRIME_VISIT("60 Months Post Prime Visit");
+    PRIME_VACCINATION_DAY("D0 Prime Vaccination"),
+    D1_VISIT("D1 Sub-study visit"),
+    D3_VISIT("D3 Sub-study visit"),
+    D7_VISIT("D7 Phone call"),
+    D28_VISIT("D28 Phone call"),
+    BOOST_VACCINATION_DAY("D56 Boost Vaccination"),
+    D57_VISIT("D57 Sub-study visit"),
+    D59_VISIT("D59 Sub-study visit"),
+    D63_VISIT("D63 Phone call"),
+    D77_VISIT("D77 Physical visit"),
+    D84_VISIT("D84 Phone call"),
+    D180_VISIT("D180 Phone call"),
+    D365_VISIT("D365 Physical visit"),
+    D720_VISIT("D720 Phone call");
 
     @Getter
     private String displayValue;

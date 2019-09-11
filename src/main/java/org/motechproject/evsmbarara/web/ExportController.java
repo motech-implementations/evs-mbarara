@@ -1,20 +1,25 @@
 package org.motechproject.evsmbarara.web;
 
 
+import static org.apache.commons.lang.CharEncoding.UTF_8;
+import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.APPLICATION_PDF_CONTENT;
+import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.TEXT_CSV_CONTENT;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.motechproject.mds.query.QueryParams;
-import org.motechproject.mds.service.impl.csv.writer.CsvTableWriter;
 import org.motechproject.evsmbarara.constants.EvsMbararaConstants;
-import org.motechproject.evsmbarara.domain.Screening;
 import org.motechproject.evsmbarara.domain.UnscheduledVisit;
 import org.motechproject.evsmbarara.domain.Visit;
 import org.motechproject.evsmbarara.dto.CapacityReportDto;
-import org.motechproject.evsmbarara.dto.PrimeVaccinationScheduleDto;
 import org.motechproject.evsmbarara.dto.UnscheduledVisitDto;
 import org.motechproject.evsmbarara.dto.VisitRescheduleDto;
 import org.motechproject.evsmbarara.exception.EvsMbararaExportException;
@@ -30,6 +35,8 @@ import org.motechproject.evsmbarara.util.ExcelTableWriter;
 import org.motechproject.evsmbarara.util.PdfTableWriter;
 import org.motechproject.evsmbarara.util.QueryParamsBuilder;
 import org.motechproject.evsmbarara.web.domain.GridSettings;
+import org.motechproject.mds.query.QueryParams;
+import org.motechproject.mds.service.impl.csv.writer.CsvTableWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,16 +48,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.lang.CharEncoding.UTF_8;
-import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.APPLICATION_PDF_CONTENT;
-import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.TEXT_CSV_CONTENT;
 
 @Controller
 public class ExportController {
@@ -69,25 +66,6 @@ public class ExportController {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @RequestMapping(value = "/exportInstances/screening", method = RequestMethod.GET)
-    public void exportScreening(GridSettings settings, @RequestParam String exportRecords,
-                                @RequestParam String outputFormat, HttpServletResponse response) throws IOException {
-
-        GridSettings newSettings = DtoLookupHelper.changeLookupForScreeningAndUnscheduled(settings);
-        exportEntity(newSettings, exportRecords, outputFormat, response, EvsMbararaConstants.SCREENING_NAME,
-                null, Screening.class, EvsMbararaConstants.SCREENING_FIELDS_MAP);
-    }
-
-    @RequestMapping(value = "/exportInstances/primeVaccinationSchedule", method = RequestMethod.GET)
-    public void exportPrimeVaccinationSchedule(GridSettings settings, @RequestParam String exportRecords,
-                                               @RequestParam String outputFormat, HttpServletResponse response) throws IOException {
-
-        GridSettings newSettings = DtoLookupHelper.changeLookupForPrimeVaccinationSchedule(settings);
-
-        exportEntity(newSettings, exportRecords, outputFormat, response, EvsMbararaConstants.PRIME_VACCINATION_SCHEDULE_NAME,
-                PrimeVaccinationScheduleDto.class, Visit.class, EvsMbararaConstants.PRIME_VACCINATION_SCHEDULE_FIELDS_MAP);
-    }
-
     @RequestMapping(value = "/exportInstances/visitReschedule", method = RequestMethod.GET)
     public void exportVisitReschedule(GridSettings settings, @RequestParam String exportRecords,
                                       @RequestParam String outputFormat, HttpServletResponse response) throws IOException {
@@ -102,7 +80,7 @@ public class ExportController {
     public void exportUnscheduledVisits(GridSettings settings, @RequestParam String exportRecords,
                                         @RequestParam String outputFormat, HttpServletResponse response) throws IOException {
 
-        GridSettings newSettings = DtoLookupHelper.changeLookupForScreeningAndUnscheduled(settings);
+        GridSettings newSettings = DtoLookupHelper.changeLookupForUnscheduled(settings);
 
         exportEntity(newSettings, exportRecords, outputFormat, response, EvsMbararaConstants.UNSCHEDULED_VISITS_NAME,
                 UnscheduledVisitDto.class, UnscheduledVisit.class, EvsMbararaConstants.UNSCHEDULED_VISIT_FIELDS_MAP);

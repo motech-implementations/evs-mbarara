@@ -4,15 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.LocalDate;
-import org.motechproject.commons.date.model.Time;
+import org.motechproject.evsmbarara.util.serializer.CustomDateSerializer;
 import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
 import org.motechproject.mds.annotations.NonEditable;
-import org.motechproject.evsmbarara.util.serializer.CustomDateSerializer;
-import org.motechproject.evsmbarara.util.serializer.CustomTimeSerializer;
 
 @Entity(recordHistory = true)
 public class UnscheduledVisit {
+
+    public static final String DATE_PROPERTY_NAME = "date";
 
     @Field
     @Getter
@@ -24,28 +24,11 @@ public class UnscheduledVisit {
     @Setter
     private Subject subject;
 
-    @Field
-    @Getter
-    @Setter
-    private Clinic clinic;
-
     @Field(required = true)
     @JsonSerialize(using = CustomDateSerializer.class)
     @Getter
     @Setter
     private LocalDate date;
-
-    @Field(required = true)
-    @JsonSerialize(using = CustomTimeSerializer.class)
-    @Getter
-    @Setter
-    private Time startTime;
-
-    @Field(required = true)
-    @JsonSerialize(using = CustomTimeSerializer.class)
-    @Getter
-    @Setter
-    private Time endTime;
 
     @Field
     @Getter

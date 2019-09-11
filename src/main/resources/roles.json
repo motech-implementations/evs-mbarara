@@ -10,12 +10,8 @@
     "permissionNames": [
       "manageEvsMbarara",
       "evsMbararaSubjectsTab",
-      "evsMbararaScreeningBookingTab",
-      "evsMbararaPrimeVaccinationBookingTab",
-      "evsMbararaClinicVisitBookingTab",
       "evsMbararaVisitRescheduleBookingTab",
       "unscheduledVisitsTab",
-      "evsMbararaAdvancedSettings",
       "evsMbararaReportsTab",
       "viewUI"
     ]
@@ -25,9 +21,6 @@
     "permissionNames": [
       "manageEvsMbarara",
       "evsMbararaSubjectsTab",
-      "evsMbararaScreeningBookingTab",
-      "evsMbararaPrimeVaccinationBookingTab",
-      "evsMbararaClinicVisitBookingTab",
       "evsMbararaVisitRescheduleBookingTab",
       "unscheduledVisitsTab",
       "evsMbararaReportsTab",

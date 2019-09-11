@@ -3,15 +3,7 @@
 
     /* App Module */
     var evsMbarara = angular.module('evsMbarara', ['evsMbarara.controllers', 'evsMbarara.services',
-        'evsMbarara.directives', 'motech-dashboard', 'data-services', 'ui.directives']), clinicId, subjectId;
-
-    $.ajax({
-        url: '../mds/entities/getEntity/EVS Mbarara/Clinic',
-        success:  function(data) {
-            clinicId = data.id;
-        },
-        async: false
-    });
+        'evsMbarara.directives', 'motech-dashboard', 'data-services', 'ui.directives']), subjectId;
 
     $.ajax({
         url: '../mds/entities/getEntity/EVS Mbarara/Participant',
@@ -41,9 +33,7 @@
 
             tab = EVS_MBARARA_AVAILABLE_TABS[i];
 
-            if (tab === "visitLimitation") {
-                $routeProvider.when('/evsMbarara/{0}'.format(tab), {redirectTo: '/mds/dataBrowser/' + clinicId + '/evs-mbarara'});
-            } else if (tab === "subjects") {
+            if (tab === "subjects") {
                 $routeProvider.when('/evsMbarara/{0}'.format(tab), {
                     templateUrl: '../evs-mbarara/resources/partials/evsMbararaInstances.html',
                     controller: 'MdsDataBrowserCtrl',

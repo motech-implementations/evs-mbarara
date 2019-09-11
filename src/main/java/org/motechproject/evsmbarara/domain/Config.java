@@ -1,22 +1,14 @@
 package org.motechproject.evsmbarara.domain;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.motechproject.evsmbarara.constants.EvsMbararaConstants;
 
 public class Config {
-
-    public static final String TIME_PICKER_FORMAT = "HH:mm";
-
-    @Getter
-    @Setter
-    private List<String> clinicMainFields = new ArrayList<>();
-
-    @Getter
-    @Setter
-    private List<String> clinicExtendedFields = new ArrayList<>();
 
     @Getter
     @Setter
@@ -24,25 +16,53 @@ public class Config {
 
     @Getter
     @Setter
-    private Boolean showWarnings = true;
+    private List<String> subStudyVisits = new ArrayList<>();
 
     @Getter
     @Setter
-    private String zetesUrl;
+    private Boolean enableReportJob = false;
 
     @Getter
     @Setter
-    private String zetesUsername;
+    private String reportCalculationStartTime = EvsMbararaConstants.DAILY_REPORT_EVENT_START_HOUR;
 
     @Getter
     @Setter
-    private String zetesPassword;
+    private String lastCalculationDateForIvrReports;
 
     @Getter
     @Setter
-    private String startTime;
+    private Set<String> ivrAndSmsStatisticReportsToUpdate = new HashSet<>();
 
     @Getter
     @Setter
-    private Boolean enableZetesJob = false;
+    private Boolean sendIvrCalls = true;
+
+    @Getter
+    @Setter
+    private String ivrSettingsName;
+
+    @Getter
+    @Setter
+    private String apiKey;
+
+    @Getter
+    @Setter
+    private String statusCallbackUrl;
+
+    @Getter
+    @Setter
+    private Boolean sendSmsIfVoiceFails = true;
+
+    @Getter
+    @Setter
+    private Boolean detectVoiceMail = true;
+
+    @Getter
+    @Setter
+    private Integer retryAttempts;
+
+    @Getter
+    @Setter
+    private Integer retryDelay;
 }

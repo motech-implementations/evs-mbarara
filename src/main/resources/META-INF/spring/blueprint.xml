@@ -11,12 +11,6 @@
 
     <security:global-method-security pre-post-annotations="enabled" proxy-target-class="true"/>
 
-    <osgi:reference id="clinicDataService"
-                    interface="org.motechproject.evsmbarara.repository.ClinicDataService" />
-
-    <osgi:reference id="screeningDataService"
-                    interface="org.motechproject.evsmbarara.repository.ScreeningDataService" />
-
     <osgi:reference id="subjectDataService"
                     interface="org.motechproject.evsmbarara.repository.SubjectDataService" />
 
@@ -29,25 +23,13 @@
     <osgi:reference id="visitScheduleOffsetDataService"
                     interface="org.motechproject.evsmbarara.repository.VisitScheduleOffsetDataService" />
 
-    <osgi:reference id="volunteerDataService"
-                    interface="org.motechproject.evsmbarara.repository.VolunteerDataService" />
-
-    <osgi:service ref="evsMbararaLifecycleListener"
-                  interface="org.motechproject.evsmbarara.listener.EvsMbararaLifecycleListener"/>
-
-    <osgi:service ref="clinicService" interface="org.motechproject.evsmbarara.service.ClinicService" />
-
     <osgi:service ref="configService" interface="org.motechproject.evsmbarara.service.ConfigService" />
 
     <osgi:service ref="exportService" interface="org.motechproject.evsmbarara.service.ExportService" />
 
     <osgi:service ref="lookupService" interface="org.motechproject.evsmbarara.service.LookupService" />
 
-    <osgi:service ref="primeVaccinationScheduleService" interface="org.motechproject.evsmbarara.service.PrimeVaccinationScheduleService" />
-
     <osgi:service ref="reportService" interface="org.motechproject.evsmbarara.service.ReportService" />
-
-    <osgi:service ref="screeningService" interface="org.motechproject.evsmbarara.service.ScreeningService" />
 
     <osgi:service ref="subjectService" interface="org.motechproject.evsmbarara.service.SubjectService" />
 
@@ -56,10 +38,6 @@
     <osgi:service ref="visitRescheduleService" interface="org.motechproject.evsmbarara.service.VisitRescheduleService" />
 
     <osgi:service ref="visitScheduleOffsetService" interface="org.motechproject.evsmbarara.service.VisitScheduleOffsetService" />
-
-    <osgi:service ref="visitScheduleService" interface="org.motechproject.evsmbarara.service.VisitScheduleService" />
-
-    <osgi:service ref="zetesService" interface="org.motechproject.evsmbarara.service.ZetesService" />
 
     <osgi:reference id="entityService" interface="org.motechproject.mds.service.EntityService"/>
 

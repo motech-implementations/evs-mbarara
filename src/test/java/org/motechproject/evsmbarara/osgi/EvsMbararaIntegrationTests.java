@@ -9,7 +9,6 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         EvsMbararaWebIT.class,
-        EvsMbararaLifecycleListenerIT.class,
         EvsMbararaConfigServiceIT.class,
         LookupServiceIT.class,
         SubjectServiceIT.class

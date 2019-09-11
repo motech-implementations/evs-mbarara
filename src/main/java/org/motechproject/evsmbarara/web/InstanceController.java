@@ -1,19 +1,25 @@
 package org.motechproject.evsmbarara.web;
 
+import static org.apache.commons.lang.CharEncoding.UTF_8;
+import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.APPLICATION_PDF_CONTENT;
+import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.TEXT_CSV_CONTENT;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.motechproject.mds.dto.CsvImportResults;
-import org.motechproject.mds.dto.EntityDto;
-import org.motechproject.mds.dto.LookupDto;
-import org.motechproject.mds.ex.csv.CsvImportException;
-import org.motechproject.mds.query.QueryParams;
-import org.motechproject.mds.service.CsvImportExportService;
-import org.motechproject.mds.service.EntityService;
-import org.motechproject.mds.util.Constants;
 import org.motechproject.evsmbarara.constants.EvsMbararaConstants;
 import org.motechproject.evsmbarara.domain.Subject;
 import org.motechproject.evsmbarara.exception.EvsMbararaLookupException;
@@ -24,6 +30,14 @@ import org.motechproject.evsmbarara.util.QueryParamsBuilder;
 import org.motechproject.evsmbarara.util.SubjectVisitsMixin;
 import org.motechproject.evsmbarara.web.domain.GridSettings;
 import org.motechproject.evsmbarara.web.domain.Records;
+import org.motechproject.mds.dto.CsvImportResults;
+import org.motechproject.mds.dto.EntityDto;
+import org.motechproject.mds.dto.LookupDto;
+import org.motechproject.mds.ex.csv.CsvImportException;
+import org.motechproject.mds.query.QueryParams;
+import org.motechproject.mds.service.CsvImportExportService;
+import org.motechproject.mds.service.EntityService;
+import org.motechproject.mds.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,29 +50,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.lang.CharEncoding.UTF_8;
-import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.APPLICATION_PDF_CONTENT;
-import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.TEXT_CSV_CONTENT;
-
 @Controller
 public class InstanceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InstanceController.class);
 
-    private static final List<String> SUBJECT_AVAILABLE_LOOKUPS = new ArrayList<>(Arrays.asList("Find By Name",
-            "Find By Primer Vaccination Date Range", "Find By Booster Vaccination Date Range", "Find By Address",
-            "Find By Participant Id", "Find By exact Phone Number", "Find By Site Name", "Find by Visit Type and Actual Date Range"));
+    private static final List<String> SUBJECT_AVAILABLE_LOOKUPS = new ArrayList<>(Arrays.asList(
+            "Find By Primer Vaccination Date Range", "Find By Booster Vaccination Date Range",
+            "Find By Participant Id", "Find By exact Phone Number", "Find by Visit Type and Actual Date Range"));
 
     @Autowired
     private LookupService lookupService;

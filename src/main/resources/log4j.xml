@@ -10,14 +10,6 @@
         </layout>
     </appender>
 
-    <logger name="org.motechproject.evs-mbarara.service.impl.ZetesServiceImpl">
-        <level value="INFO"/>
-    </logger>
-
-    <logger name="org.motechproject.evs-mbarara.web.ZetesController">
-        <level value="WARN"/>
-    </logger>
-
     <root>
         <priority value="ERROR"/>
         <appender-ref ref="CONSOLE"/>

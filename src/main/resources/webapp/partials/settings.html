@@ -13,26 +13,6 @@
 
         <form name="form" class="form-horizontal inside" novalidate>
 
-            <h5 class="margin-before2">{{msg('evsMbarara.settings.advancedSettings')}}</h5>
-
-            <div class="form-group">
-                <label class="col-md-2 control-label">{{msg('evsMbarara.settings.advancedSettings.clinicMainFields.label')}}</label>
-                <div class="col-md-4" data-toggle="tooltip" data-placement="top" data-trigger="hover" bs-popover="{{msg('evsMbarara.settings.advancedSettings.clinicMainFields.tooltip')}}">
-                    <select id="clinicMainFields" class="form-control" ui-select2 multiple select2-ng-change="mainFieldsChanged">
-                        <option ng-repeat="field in availableMainFields" value="{{field}}">{{field}}</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-md-2 control-label">{{msg('evsMbarara.settings.advancedSettings.clinicExtendedFields.label')}}</label>
-                <div class="col-md-4" data-toggle="tooltip" data-placement="top" data-trigger="hover" bs-popover="{{msg('evsMbarara.settings.advancedSettings.clinicExtendedFields.tooltip')}}">
-                    <select id="clinicExtendedFields" class="form-control" ui-select2 multiple select2-ng-change="extendedFieldsChanged">
-                        <option ng-repeat="field in availableExtendedFields" value="{{field}}">{{field}}</option>
-                    </select>
-                </div>
-            </div>
-
             <h5 class="margin-before2">{{msg('evsMbarara.settings.visitSchedule')}}</h5>
 
             <div class="form-group">
@@ -44,50 +24,89 @@
                 </div>
             </div>
 
-            <h5 class="margin-before2">{{msg('evsMbarara.settings.warning')}}</h5>
-
             <div class="form-group">
-                <label class="col-md-2 control-label">{{msg('evsMbarara.settings.warning.label')}}</label>
-                <div class="col-md-1" data-toggle="tooltip" data-placement="top" data-trigger="hover" bs-popover="{{msg('evsMbarara.settings.warning.tooltip')}}">
-                    <input type="checkbox" class="form-control" id="warningMessages" checked="checked" ng-model="config.showWarnings"/>
+                <label class="col-md-2 control-label">{{msg('evsMbarara.settings.visitSchedule.subStudyVisits.label')}}</label>
+                <div class="col-md-4" data-toggle="tooltip" data-placement="top" data-trigger="hover" bs-popover="{{msg('evsMbarara.settings.visitSchedule.subStudyVisits.tooltip')}}">
+                    <select id="subStudyVisits" class="form-control" ui-select2 multiple select2-ng-change="subStudyVisitsChanged">
+                        <option ng-repeat="visit in availableVisits" value="{{visit}}">{{visit}}</option>
+                    </select>
                 </div>
             </div>
 
-            <h5 class="margin-before2">{{msg('evsMbarara.settings.zetes')}}</h5>
+            <h5 class="margin-before2">{{msg('evsMbarara.settings.report')}}</h5>
 
             <div class="form-group">
-                <label class="col-md-2 control-label">{{msg('evsMbarara.settings.zetes.enable')}}</label>
+                <label class="col-md-2 control-label">{{msg('evsMbarara.settings.report.enable')}}</label>
                 <div class="col-md-1">
-                    <input type="checkbox" class="form-control" id="zetesSettingsCheckBox" checked="unchecked" ng-model="config.enableZetesJob"/>
+                    <input type="checkbox" class="form-control" id="reportSettingsCheckBox" checked="unchecked" ng-model="config.enableReportJob"/>
                 </div>
             </div>
 
-            <div class="form-group" ng-show="config.enableZetesJob">
+            <div class="form-group" ng-show="config.enableReportJob">
                 <div class="form-group">
-                    <label class="col-md-2 control-label" for="zetesUrl">{{msg('evsMbarara.settings.zetes.updateUrl')}}</label>
-                    <div class="col-md-4" data-toggle="tooltip" data-placement="top" data-trigger="hover" bs-popover="{{msg('evsMbarara.settings.zetes.updateUrl.tooltip')}}">
-                        <input class="form-control" id="zetesUrl" type="text" ng-model="config.zetesUrl" ng-required="config.enableZetesJob">
+                    <label class="col-md-2 control-label" for="reportCalculationStartTime">{{msg('evsMbarara.settings.report.startTime')}}</label>
+                    <div class="col-md-4">
+                        <input class="form-control" id="reportCalculationStartTime" type="text" ng-model="config.reportCalculationStartTime" time-picker ng-required="config.enableReportJob">
+                    </div>
+                </div>
+            </div>
+
+            <h5 class="margin-before2">{{msg('evsMbarara.settings.ivrCalls')}}</h5>
+
+            <div class="form-group">
+                <label class="col-md-2 control-label">{{msg('evsMbarara.settings.sendIvrCalls')}}</label>
+                <div class="col-md-1">
+                    <input type="checkbox" class="form-control" id="sendIvrCalls" ng-model="config.sendIvrCalls"/>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="config.sendIvrCalls">
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="ivrSettingsName">{{msg('evsMbarara.settings.calls.ivrSettingsName')}}</label>
+                    <div class="col-md-4">
+                        <input class="form-control" id="ivrSettingsName" type="text" ng-model="config.ivrSettingsName" ng-required="config.sendIvrCalls">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="col-md-2 control-label" for="zetesUsername">{{msg('evsMbarara.settings.zetes.username')}}</label>
+                    <label class="col-md-2 control-label" for="apiKey">{{msg('evsMbarara.settings.calls.apiKey')}}</label>
                     <div class="col-md-4">
-                        <input class="form-control" id="zetesUsername" type="text" ng-model="config.zetesUsername" ng-required="config.enableZetesJob">
+                        <input class="form-control" id="apiKey" type="text" ng-model="config.apiKey" ng-required="config.sendIvrCalls">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="col-md-2 control-label" for="zetesPassword">{{msg('evsMbarara.settings.zetes.password')}}</label>
+                    <label class="col-md-2 control-label" for="statusCallbackUrl">{{msg('evsMbarara.settings.calls.statusCallbackUrl')}}</label>
                     <div class="col-md-4">
-                        <input class="form-control" id="zetesPassword" type="password" ng-model="config.zetesPassword" ng-required="config.enableZetesJob">
+                        <input class="form-control" id="statusCallbackUrl" type="text" ng-model="config.statusCallbackUrl" ng-required="config.sendIvrCalls">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="col-md-2 control-label" for="startTime">{{msg('evsMbarara.settings.zetes.startTime')}}</label>
-                    <div class="col-md-4">
-                        <input class="form-control" id="startTime" type="text" ng-model="config.startTime" time-picker ng-required="config.enableZetesJob">
+                    <label class="col-md-2 control-label" for="sendSmsIfVoiceFails">{{msg('evsMbarara.settings.calls.sendSmsIfVoiceFails')}}</label>
+                    <div class="col-md-1">
+                        <input class="form-control" id="sendSmsIfVoiceFails" type="checkbox" ng-model="config.sendSmsIfVoiceFails">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="detectVoiceMail">{{msg('evsMbarara.settings.calls.detectVoiceMail')}}</label>
+                    <div class="col-md-1">
+                        <input class="form-control" id="detectVoiceMail" type="checkbox" ng-model="config.detectVoiceMail">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="retryAttempts">{{msg('evsMbarara.settings.calls.retryAttempts')}}</label>
+                    <div class="col-md-2">
+                        <input class="form-control" id="retryAttempts" type="number" ng-model="config.retryAttempts" ng-required="config.sendIvrCalls">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="retryDelay">{{msg('evsMbarara.settings.calls.retryDelay')}}</label>
+                    <div class="col-md-2">
+                        <input class="form-control" id="retryDelay" type="number" ng-model="config.retryDelay" ng-required="config.sendIvrCalls">
                     </div>
                 </div>
             </div>

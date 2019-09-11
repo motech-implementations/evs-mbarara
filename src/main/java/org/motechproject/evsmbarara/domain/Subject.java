@@ -1,5 +1,11 @@
 package org.motechproject.evsmbarara.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.jdo.annotations.Column;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Unique;
+import javax.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,26 +14,17 @@ import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.motechproject.mds.annotations.Cascade;
-import org.motechproject.mds.annotations.Entity;
-import org.motechproject.mds.annotations.Field;
-import org.motechproject.mds.annotations.Ignore;
-import org.motechproject.mds.annotations.NonEditable;
-import org.motechproject.mds.annotations.UIDisplayable;
-import org.motechproject.evsmbarara.domain.enums.Gender;
 import org.motechproject.evsmbarara.domain.enums.Language;
 import org.motechproject.evsmbarara.util.serializer.CustomDateDeserializer;
 import org.motechproject.evsmbarara.util.serializer.CustomDateSerializer;
 import org.motechproject.evsmbarara.util.serializer.CustomDateTimeDeserializer;
 import org.motechproject.evsmbarara.util.serializer.CustomDateTimeSerializer;
 import org.motechproject.evsmbarara.util.serializer.CustomVisitListDeserializer;
-
-import javax.jdo.annotations.Column;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.Unique;
-import javax.validation.constraints.Pattern;
-import java.util.ArrayList;
-import java.util.List;
+import org.motechproject.mds.annotations.Cascade;
+import org.motechproject.mds.annotations.Entity;
+import org.motechproject.mds.annotations.Field;
+import org.motechproject.mds.annotations.NonEditable;
+import org.motechproject.mds.annotations.UIDisplayable;
 
 /**
  * Models data for registration of Subject in EVS Mbarara
@@ -38,10 +35,6 @@ public class Subject {
     public static final String SUBJECT_ID_FIELD_NAME = "subjectId";
     public static final String SUBJECT_ID_FIELD_DISPLAY_NAME = "Participant Id";
 
-    /**
-     * Fields captured in ZETES
-     */
-
     @Unique
     @NonEditable
     @UIDisplayable(position = 0)
@@ -51,109 +44,20 @@ public class Subject {
     private String subjectId;
 
     @UIDisplayable(position = 1)
-    @Field(required = true)
-    @Getter
-    @Setter
-    private String name;
-
-    @UIDisplayable(position = 2)
     @Column(length = 20)
     @Pattern(regexp = "^[0-9\\s]*$")
     @Field
     @Getter
-    @Setter
     private String phoneNumber;
 
-    @UIDisplayable(position = 3)
-    @Field
-    @Getter
-    @Setter
-    private String address;
-
-    @NonEditable
-    @UIDisplayable(position = 4)
-    @Field(required = true)
-    @Getter
-    @Setter
-    private Gender gender;
-
-    @UIDisplayable(position = 5)
+    @UIDisplayable(position = 2)
     @Column(length = 20)
-    @Field(required = true)
+    @Field
     @Getter
     @Setter
     private Language language;
 
-    @NonEditable
-    @UIDisplayable(position = 6)
-    @Field(required = true)
-    @Getter
-    @Setter
-    private String siteId;
-
-    @NonEditable
-    @UIDisplayable(position = 7)
-    @Field(required = true)
-    @Getter
-    @Setter
-    private String siteName;
-
-    @UIDisplayable(position = 8)
-    @Field
-    @Getter
-    @Setter
-    private String community;
-
-    @NonEditable(display = false)
-    @Field
-    @Getter
-    @Setter
-    private String chiefdom;
-
-    @NonEditable(display = false)
-    @Field
-    @Getter
-    @Setter
-    private String section;
-
-    @NonEditable(display = false)
-    @Field
-    @Getter
-    @Setter
-    private String district;
-
-    @UIDisplayable(position = 9)
-    @Field(required = true)
-    @Getter
-    @Setter
-    private Integer age;
-
-    @UIDisplayable(position = 10)
-    @Field
-    @Getter
-    @Setter
-    private String guardianName;
-
-    @UIDisplayable(position = 11)
-    @Field
-    @Getter
-    @Setter
-    private String guardianType;
-
-    /**
-     * Other fields
-     */
-
-    @UIDisplayable(position = 12)
-    @JsonDeserialize(using = CustomVisitListDeserializer.class)
-    @Field
-    @Persistent(mappedBy = "subject")
-    @Cascade(delete = true)
-    @Getter
-    @Setter
-    private List<Visit> visits = new ArrayList<>();
-
-    @UIDisplayable(position = 13)
+    @UIDisplayable(position = 3)
     @JsonSerialize(using = CustomDateSerializer.class)
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @NonEditable
@@ -162,7 +66,7 @@ public class Subject {
     @Setter
     private LocalDate primerVaccinationDate;
 
-    @UIDisplayable(position = 14)
+    @UIDisplayable(position = 4)
     @JsonSerialize(using = CustomDateSerializer.class)
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @NonEditable
@@ -171,22 +75,30 @@ public class Subject {
     @Setter
     private LocalDate boosterVaccinationDate;
 
-    @Field(defaultValue = "false")
+    @UIDisplayable(position = 5)
+    @Column
+    @Field
     @Getter
     @Setter
-    private boolean changed;
+    private Boolean subStudy;
+
+    /**
+     * Other fields
+     */
+    @UIDisplayable(position = 6)
+    @JsonDeserialize(using = CustomVisitListDeserializer.class)
+    @Field
+    @Persistent(mappedBy = "subject")
+    @Cascade(delete = true)
+    @Getter
+    @Setter
+    private List<Visit> visits = new ArrayList<>();
 
     @NonEditable(display = false)
     @Field
     @Getter
     @Setter
-    private Boolean femaleChildBearingAge;
-
-    @NonEditable(display = false)
-    @Field
-    @Getter
-    @Setter
-    private Integer yearOfBirth;
+    private String name;
 
     /**
      * Motech internal fields
@@ -216,34 +128,22 @@ public class Subject {
     @Setter
     private DateTime modificationDate;
 
+    public Subject(Subject subject) {
+        subjectId = subject.getSubjectId();
+        phoneNumber = subject.getPhoneNumber();
+        language = subject.getLanguage();
+        primerVaccinationDate = subject.getPrimerVaccinationDate();
+        boosterVaccinationDate = subject.getBoosterVaccinationDate();
+        subStudy = subject.subStudy;
+        name = subject.getName();
+    }
+
     public void setPhoneNumber(String phoneNumber) {
         if (StringUtils.isEmpty(phoneNumber)) {
             this.phoneNumber = null;
         } else {
             this.phoneNumber = phoneNumber;
         }
-    }
-
-    public void setAddress(String address) {
-        if (StringUtils.isBlank(address)) {
-            this.address = null;
-        } else {
-            this.address = address;
-        }
-    }
-
-    @Ignore
-    public String getLanguageCode() {
-        if (language != null) {
-            return language.getCode();
-        } else {
-            return null;
-        }
-
-    }
-
-    public void setLanguageCode(String languageCode) {
-        //this setter is needed, because json deserialization doesn't work properly without it
     }
 
     @Override

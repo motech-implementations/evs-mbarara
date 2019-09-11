@@ -1,20 +1,19 @@
 package org.motechproject.evsmbarara.service.impl;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.LocalDate;
 import org.motechproject.commons.api.Range;
-import org.motechproject.commons.date.model.Time;
-import org.motechproject.mds.query.QueryParams;
-import org.motechproject.evsmbarara.constants.EvsMbararaConstants;
-import org.motechproject.evsmbarara.domain.Clinic;
 import org.motechproject.evsmbarara.domain.Subject;
 import org.motechproject.evsmbarara.domain.Visit;
 import org.motechproject.evsmbarara.domain.VisitScheduleOffset;
 import org.motechproject.evsmbarara.domain.enums.VisitType;
 import org.motechproject.evsmbarara.dto.VisitRescheduleDto;
-import org.motechproject.evsmbarara.exception.LimitationExceededException;
-import org.motechproject.evsmbarara.helper.VisitLimitationHelper;
 import org.motechproject.evsmbarara.repository.SubjectDataService;
 import org.motechproject.evsmbarara.repository.VisitDataService;
 import org.motechproject.evsmbarara.service.ConfigService;
@@ -24,14 +23,9 @@ import org.motechproject.evsmbarara.service.VisitScheduleOffsetService;
 import org.motechproject.evsmbarara.util.QueryParamsBuilder;
 import org.motechproject.evsmbarara.web.domain.GridSettings;
 import org.motechproject.evsmbarara.web.domain.Records;
+import org.motechproject.mds.query.QueryParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service("visitRescheduleService")
 public class VisitRescheduleServiceImpl implements VisitRescheduleService {
@@ -44,9 +38,6 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
 
     @Autowired
     private VisitScheduleOffsetService visitScheduleOffsetService;
-
-    @Autowired
-    private VisitLimitationHelper visitLimitationHelper;
 
     @Autowired
     private SubjectDataService subjectDataService;
@@ -93,59 +84,9 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
             throw new IllegalArgumentException("Cannot reschedule, because details for Visit not found");
         }
 
-        Clinic clinic = visit.getClinic();
-
         validateDates(visitRescheduleDto, visit);
 
-        if (clinic != null && !ignoreLimitation && visitRescheduleDto.getActualDate() == null) {
-            checkNumberOfPatients(visitRescheduleDto, clinic);
-        }
-
         return new VisitRescheduleDto(updateVisitDetailsWithDto(visit, visitRescheduleDto));
-    }
-
-    private void checkNumberOfPatients(VisitRescheduleDto dto, Clinic clinic) { //NO CHECKSTYLE CyclomaticComplexity
-
-        List<Visit> visits = visitDataService
-                .findByClinicIdVisitPlannedDateAndType(clinic.getId(), dto.getPlannedDate(), dto.getVisitType());
-
-        visitLimitationHelper.checkCapacityForVisit(dto.getPlannedDate(), clinic, dto.getVisitId());
-
-        if (visits != null && !visits.isEmpty()) {
-            Integer numberOfRooms = clinic.getNumberOfRooms();
-            int maxVisits = visitLimitationHelper.getMaxVisitCountForVisitType(dto.getVisitType(), clinic);
-            int patients = 0;
-
-            Time startTime = dto.getStartTime();
-            Time endTime = null;
-
-            if (startTime != null) {
-                endTime = calculateEndTime(startTime);
-            }
-
-            for (Visit visit : visits) {
-                if (visit.getId().equals(dto.getVisitId())) {
-                    maxVisits++;
-                } else if (startTime != null && visit.getStartTime() != null) {
-                    if (startTime.isBefore(visit.getStartTime())) {
-                        if (visit.getStartTime().isBefore(endTime)) {
-                            patients++;
-                        }
-                    } else {
-                        if (startTime.isBefore(visit.getEndTime())) {
-                            patients++;
-                        }
-                    }
-                }
-            }
-
-            if (visits.size() >= maxVisits) {
-                throw new LimitationExceededException("The booking limit for this type of visit has been reached");
-            }
-            if (numberOfRooms != null && patients >= numberOfRooms) {
-                throw new LimitationExceededException("Too many visits at the same time");
-            }
-        }
     }
 
     private void validateDates(VisitRescheduleDto dto, Visit visit) {
@@ -190,11 +131,6 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
     }
 
     private Visit updateVisitDetailsWithDto(Visit visit, VisitRescheduleDto dto) {
-        Time startTime = dto.getStartTime();
-        if (startTime != null) {
-            visit.setStartTime(startTime);
-            visit.setEndTime(calculateEndTime(startTime));
-        }
         visit.setIgnoreDateLimitation(dto.getIgnoreDateLimitation());
         visit.setDateProjected(dto.getPlannedDate());
         visit.setDate(dto.getActualDate());
@@ -214,11 +150,6 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
             return objectMapper.readValue(json, new TypeReference<LinkedHashMap>() {
             });  //NO CHECKSTYLE WhitespaceAround
         }
-    }
-
-    private Time calculateEndTime(Time startTime) {
-        int endTimeHour = (startTime.getHour() + EvsMbararaConstants.TIME_OF_THE_VISIT) % EvsMbararaConstants.MAX_TIME_HOUR;
-        return new Time(endTimeHour, startTime.getMinute());
     }
 
     private Range<LocalDate> calculateEarliestAndLatestDate(Visit visit, Map<VisitType, VisitScheduleOffset> visitTypeOffset,

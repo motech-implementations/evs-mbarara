@@ -1,17 +1,18 @@
 package org.motechproject.evsmbarara.web;
 
-import org.motechproject.mds.dto.LookupDto;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.motechproject.evsmbarara.constants.EvsMbararaConstants;
 import org.motechproject.evsmbarara.domain.UnscheduledVisit;
 import org.motechproject.evsmbarara.dto.UnscheduledVisitDto;
 import org.motechproject.evsmbarara.exception.EvsMbararaLookupException;
-import org.motechproject.evsmbarara.exception.LimitationExceededException;
 import org.motechproject.evsmbarara.helper.DtoLookupHelper;
-import org.motechproject.evsmbarara.repository.SubjectDataService;
 import org.motechproject.evsmbarara.service.LookupService;
 import org.motechproject.evsmbarara.service.UnscheduledVisitService;
 import org.motechproject.evsmbarara.web.domain.GridSettings;
 import org.motechproject.evsmbarara.web.domain.Records;
+import org.motechproject.mds.dto.LookupDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 @RequestMapping("unscheduledVisits")
 @PreAuthorize(EvsMbararaConstants.HAS_UNSCHEDULED_VISITS_TAB_ROLE)
@@ -43,24 +40,17 @@ public class UnscheduledVisitController {
     @Autowired
     private UnscheduledVisitService unscheduledVisitService;
 
-    @Autowired
-    private SubjectDataService subjectDataService;
-
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public Records<UnscheduledVisitDto> getUnscheduledVisits(GridSettings settings) throws IOException {
-        return unscheduledVisitService.getUnscheduledVisitsRecords(DtoLookupHelper.changeLookupForScreeningAndUnscheduled(settings));
+        return unscheduledVisitService.getUnscheduledVisitsRecords(DtoLookupHelper.changeLookupForUnscheduled(settings));
     }
 
     @RequestMapping(value = "/new/{ignoreLimitation}", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public Object addOrUpdateUnscheduled(@PathVariable Boolean ignoreLimitation,
                                          @RequestBody UnscheduledVisitDto unscheduledVisitDto) {
-        try {
-            return unscheduledVisitService.addOrUpdate(unscheduledVisitDto, ignoreLimitation);
-        } catch (LimitationExceededException e) {
-            return e.getMessage();
-        }
+        return unscheduledVisitService.addOrUpdate(unscheduledVisitDto, ignoreLimitation);
     }
 
     @RequestMapping(value = "/getLookupsForUnscheduled", method = RequestMethod.GET)

@@ -255,145 +255,6 @@
         };
     }]);
 
-    directives.directive('screeningGrid', function ($compile, $timeout) {
-
-        function createButton(id) {
-            return '<button type="button" class="btn btn-primary btn-sm ng-binding compileBtn" ng-click="printRow(' +
-                               id + ')"><i class="fa fa-fw fa-print"></i></button>';
-        }
-
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                var elem = angular.element(element), eventChange, eventResize;
-
-                elem.jqGrid({
-                    url: "../evs-mbarara/screenings",
-                    datatype: "json",
-                    mtype: "GET",
-                    shrinkToFit: false,
-                    colNames: [
-                        scope.msg("evsMbarara.screening.bookingId"),
-                        scope.msg("evsMbarara.screening.name"),
-                        scope.msg("evsMbarara.screening.contactNumberShort"),
-                        scope.msg("evsMbarara.screening.additionalContactShort"),
-                        scope.msg("evsMbarara.location"),
-                        scope.msg("evsMbarara.screening.date"),
-                        scope.msg("evsMbarara.screening.time"),
-                        scope.msg("evsMbarara.screening.status"),
-                        "", ""],
-                    colModel: [
-                        { name: "volunteer.id", width: 90 },
-                        { name: "volunteer.name" },
-                        { name: "volunteer.contactNumber", width: 120 },
-                        { name: "volunteer.additionalContact", width: 120 },
-                        { name: "clinic.location", width: 120 },
-                        { name: "date", width: 120 },
-                        { name: "startTime", width: 120 },
-                        { name: "status", width: 80 },
-                        { name: "print", align: "center", sortable: false, width: 40 },
-                        { name: "changeStatus", align: "center", sortable: false, width: 160,
-                             formatter: function(cellValue, options, rowObject) {
-                                 if (rowObject.status === 'Active') {
-                                     return "<div class=\"btn-group\">" +
-                                                "<button ng-click='cancel(\"" + rowObject.id + "\")'" +
-                                                    " data-toggle=\"tooltip\" title=\"" + scope.msg('evsMbarara.screening.btn.cancel') + "\"" +
-                                                    " type='button' class='btn btn-danger compileBtn' ng-disabled='updateInProgress'>" +
-                                                    scope.msg('evsMbarara.screening.btn.cancel') + "</button>" +
-                                                "<button ng-click='complete(\"" + rowObject.id + "\")' " +
-                                                    " data-toggle=\"tooltip\" title=\"" + scope.msg('evsMbarara.screening.btn.complete') + "\"" +
-                                                    " type='button' class='btn btn-success compileBtn' ng-disabled='updateInProgress'd>"
-                                                    + "<span class=\"glyphicon glyphicon-ok\"></button>" +
-                                            "</div>";
-                                 } else if (rowObject.status === 'Canceled' || rowObject.status === 'Completed') {
-                                     return "<div class=\"btn-group\">" +
-                                                "<button ng-click='activate(\"" + rowObject.id + "\")'" +
-                                                    " data-toggle=\"tooltip\" title=\"" + scope.msg('evsMbarara.screening.btn.activate') + "\"" +
-                                                    " type='button' class='btn btn-primary compileBtn' ng-disabled='updateInProgress'>" +
-                                                    scope.msg('evsMbarara.screening.btn.activate') + "</button>" +
-                                                "<button ng-click='complete(\"" + rowObject.id + "\")' "+
-                                                    " type='button' class='btn btn-success compileBtn' disabled>"
-                                                    + "<span class=\"glyphicon glyphicon-ok\"></button>" +
-                                            "</div>";
-                                 }
-                                 return '';
-                             }
-                        }
-                    ],
-                    gridComplete: function() {
-                        var ids = elem.getDataIDs();
-                        for(var i = 0; i < ids.length; i++){
-                            elem.setRowData(ids[i], {print: createButton(ids[i])})
-                        }
-                        $compile($('.compileBtn'))(scope);
-                        $('#screeningTable .ui-jqgrid-hdiv').addClass("table-lightblue");
-                        $('#screeningTable .ui-jqgrid-btable').addClass("table-lightblue");
-                    },
-                    pager: "#pager",
-                    rowNum: 50,
-                    rowList: [10, 20, 50, 100],
-                    prmNames: {
-                        sort: 'sortColumn',
-                        order: 'sortDirection'
-                    },
-                    sortname: null,
-                    sortorder: "desc",
-                    viewrecords: true,
-                    gridview: true,
-                    loadOnce: false,
-                    postData: {
-                        startDate: function() {
-                            return handleUndefined(scope.selectedFilter.startDate);
-                        },
-                        endDate: function() {
-                            return handleUndefined(scope.selectedFilter.endDate);
-                        },
-                        dateFilter: function() {
-                            return handleUndefined(scope.selectedFilter.dateFilter);
-                        }
-                    },
-                    beforeSelectRow: function() {
-                        return false;
-                    },
-                    onCellSelect: function (id, iCol, cellContent, e) {
-                        var rowData = elem.getRowData(id);
-                        if (iCol !== 8 && iCol !== 9 && rowData.status !== "Completed") {
-                            scope.editScreening(id);
-                        }
-                    }
-                });
-
-                scope.$watch("lookupRefresh", function () {
-                    $('#' + attrs.id).jqGrid('setGridParam', {
-                        page: 1,
-                        postData: {
-                            fields: JSON.stringify(scope.lookupBy),
-                            lookup: (scope.selectedLookup) ? scope.selectedLookup.lookupName : ""
-                        }
-                    }).trigger('reloadGrid');
-                });
-
-                $(window).on('resize', function() {
-                    clearTimeout(eventResize);
-                    eventResize = $timeout(function() {
-                        scope.resizeGridHeight(attrs.id);
-                        scope.resizeGridWidth(attrs.id);
-                        $(".ui-layout-content").scrollTop(0);
-                    }, 200);
-                }).trigger('resize');
-
-                $('#inner-center').on('change', function() {
-                    clearTimeout(eventChange);
-                    eventChange = $timeout(function() {
-                        scope.resizeGridHeight(attrs.id);
-                        scope.resizeGridWidth(attrs.id);
-                    }, 200);
-                });
-
-            }
-        };
-    });
-
     directives.directive('unscheduledVisitGrid', function ($compile, $timeout) {
 
         var gridDataExtension;
@@ -402,7 +263,6 @@
             var rowExtraData = {};
 
             rowExtraData.id = rowObject.id;
-            rowExtraData.siteId = rowObject.siteId;
 
             gridDataExtension[options.rowId] = rowExtraData;
 
@@ -425,9 +285,7 @@
                     mtype: "GET",
                     colNames: [
                         scope.msg("evsMbarara.uncheduledVisit.participantId"),
-                        scope.msg("evsMbarara.location"),
                         scope.msg("evsMbarara.date"),
-                        scope.msg("evsMbarara.startTime"),
                         scope.msg("evsMbarara.uncheduledVisit.purpose"),
                         ""],
                     colModel: [
@@ -437,14 +295,7 @@
                             index: 'subject.subjectId'
                         },
                         {
-                            name: "clinicName",
-                            index: 'subject.siteName'
-                        },
-                        {
                             name: "date"
-                        },
-                        {
-                            name: "startTime"
                         },
                         {
                             name: "purpose"
@@ -489,7 +340,6 @@
                             scope.form.dto.id = extraRowData.id;
                             scope.form.dto.participantId = rowData.participantId;
                             scope.form.dto.date = rowData.date;
-                            scope.form.dto.startTime = rowData.startTime;
                             scope.form.dto.purpose = rowData.purpose;
                             scope.reloadSelects();
                             $('#unscheduledVisitModal').modal('show');
@@ -541,197 +391,6 @@
         };
     });
 
-    directives.directive('primeVaccinationGrid', function ($compile, $timeout) {
-
-        var gridDataExtension;
-        var rowsToColor = [];
-
-        function createButton(rowId) {
-            return '<button type="button" class="btn btn-primary btn-sm ng-binding printBtn" ng-click="printCardFrom(' +
-            rowId + ')">' + '<i class="fa fa-fw fa-print"></i>' + '</button>'
-        }
-
-        function extendGrid(cellValue, options, rowObject) {
-            var rowExtraData = {};
-
-            rowExtraData.visitId = rowObject.visitId;
-            rowExtraData.siteId = rowObject.siteId;
-            rowExtraData.participantGender = rowObject.participantGender;
-            rowExtraData.ignoreDateLimitation = rowObject.ignoreDateLimitation;
-
-            gridDataExtension[options.rowId] = rowExtraData;
-
-            return cellValue;
-        }
-
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                var elem = angular.element(element), eventChange, eventResize;
-
-                elem.jqGrid({
-                    url: "../evs-mbarara/primeVaccinationSchedule",
-                    datatype: "json",
-                    mtype: "GET",
-                    shrinkToFit: false,
-                    colNames: [
-                        scope.msg("evsMbarara.location"),
-                        scope.msg("evsMbarara.primeVaccination.participantId"),
-                        scope.msg("evsMbarara.primeVaccination.participantName"),
-                        scope.msg("evsMbarara.primeVaccination.femaleChildBearingAge"),
-                        scope.msg("evsMbarara.primeVaccination.screeningActualDate"),
-                        scope.msg("evsMbarara.primeVaccination.primeVacDate"),
-                        scope.msg("evsMbarara.primeVaccination.time"),
-                        ""],
-                    colModel: [
-                        {
-                            name: "location",
-                            index: 'subject.siteName'
-                        },
-                        {
-                            name: "participantId",
-                            formatter: extendGrid,
-                            index: 'subject.subjectId'
-                        },
-                        {
-                            name: "participantName",
-                            formatter: rowColorFormatter,
-                            index: 'subject.name'
-                        },
-                        {
-                            name: "femaleChildBearingAge",
-                            index: 'subject.femaleChildBearingAge',
-                            width: 180
-                        },
-                        {
-                            name: "actualScreeningDate",
-                            sortable: false,
-                            width: 180
-                        },
-                        {
-                            name: "date",
-                            index: 'dateProjected',
-                            width: 180
-                        },
-                        {
-                            name: "startTime",
-                            width: 180
-                        },
-                        {
-                            name: "print",
-                            align: "center",
-                            sortable: false,
-                            width: 40
-                        }
-                    ],
-                    gridComplete: function(){
-                        var ids = elem.getDataIDs();
-                            for(var i=0;i<ids.length;i++){
-                                elem.setRowData(ids[i],{print: createButton(ids[i])})
-                            }
-                        $compile($('.printBtn'))(scope);
-                        $('#primeVaccinationTable .ui-jqgrid-hdiv').addClass("table-lightblue");
-                        $('#primeVaccinationTable .ui-jqgrid-btable').addClass("table-lightblue");
-                        for (var i = 0; i < rowsToColor.length; i++) {
-                            $("#" + rowsToColor[i]).find("td").css("color", "red");
-                        }
-                    },
-                    pager: "#pager",
-                    rowNum: 50,
-                    rowList: [10, 20, 50, 100],
-                    prmNames: {
-                        sort: 'sortColumn',
-                        order: 'sortDirection'
-                    },
-                    sortname: null,
-                    sortorder: "desc",
-                    viewrecords: true,
-                    gridview: true,
-                    loadOnce: false,
-                    beforeSelectRow: function() {
-                        return false;
-                    },
-                    beforeRequest: function() {
-                        gridDataExtension = [];
-                        rowsToColor = [];
-                    },
-                    onCellSelect: function(rowId, iCol, cellContent, e) {
-                        if (iCol !== 7) {
-                            var rowData = elem.getRowData(rowId),
-                                extraRowData = gridDataExtension[rowId];
-                            scope.newForm("edit");
-                            scope.form.dto.visitId = extraRowData.visitId;
-                            scope.form.dto.participantId = rowData.participantId;
-                            scope.form.dto.participantName = rowData.participantName;
-                            scope.form.dto.femaleChildBearingAge = rowData.femaleChildBearingAge;
-                            scope.form.dto.actualScreeningDate = rowData.actualScreeningDate;
-                            scope.form.dto.date = rowData.date;
-                            scope.form.dto.startTime = rowData.startTime;
-                            scope.form.dto.participantGender = extraRowData.participantGender;
-                            scope.form.dto.ignoreDateLimitation = extraRowData.ignoreDateLimitation;
-                            scope.form.range = scope.calculateRange(scope.form.dto.actualScreeningDate,
-                                scope.form.dto.femaleChildBearingAge, scope.form.dto.ignoreDateLimitation);
-                            scope.reloadSelects();
-                            $('#primeVaccinationScheduleModal').modal('show');
-                        }
-                    },
-                    postData: {
-                        startDate: function() {
-                            return handleUndefined(scope.selectedFilter.startDate);
-                        },
-                        endDate: function() {
-                            return handleUndefined(scope.selectedFilter.endDate);
-                        },
-                        dateFilter: function() {
-                            return handleUndefined(scope.selectedFilter.dateFilter);
-                        }
-                    }
-                });
-
-                scope.$watch("lookupRefresh", function () {
-                    $('#' + attrs.id).jqGrid('setGridParam', {
-                        page: 1,
-                        postData: {
-                            fields: JSON.stringify(scope.lookupBy),
-                            lookup: (scope.selectedLookup) ? scope.selectedLookup.lookupName : ""
-                        }
-                    }).trigger('reloadGrid');
-                });
-
-                function rowColorFormatter(cellValue, options, rowObject) {
-                    var range = scope.calculateRangeForGrid(rowObject.actualScreeningDate,
-                        rowObject.femaleChildBearingAge, false);
-                    range.min.setHours(0,0,0,0);
-                    range.max.setHours(23,59,59,0);
-                    var min = range.min.getTime();
-                    var max = range.max.getTime();
-                    var bookingDate = Date.parse(rowObject.date);
-                    if ((max < bookingDate || min > bookingDate) && !rowObject.ignoreDateLimitation) {
-                        rowsToColor[rowsToColor.length] = options.rowId;
-                    }
-                    return cellValue;
-                }
-
-                $(window).on('resize', function() {
-                    clearTimeout(eventResize);
-                    eventResize = $timeout(function() {
-                        scope.resizeGridHeight(attrs.id);
-                        scope.resizeGridWidth(attrs.id);
-                        $(".ui-layout-content").scrollTop(0);
-                    }, 200);
-                }).trigger('resize');
-
-                $('#inner-center').on('change', function() {
-                    clearTimeout(eventChange);
-                    eventChange = $timeout(function() {
-                        scope.resizeGridHeight(attrs.id);
-                        scope.resizeGridWidth(attrs.id);
-                    }, 200);
-                });
-            }
-        };
-    });
-
     directives.directive('visitRescheduleGrid', function ($compile, $timeout) {
 
         var gridDataExtension;
@@ -748,7 +407,6 @@
         function extendGrid(cellValue, options, rowObject) {
             var rowExtraData = {};
 
-            rowExtraData.siteId = rowObject.siteId;
             rowExtraData.visitId = rowObject.visitId;
             rowExtraData.earliestDate = rowObject.earliestDate;
             rowExtraData.latestDate = rowObject.latestDate;
@@ -771,27 +429,16 @@
                     datatype: "json",
                     mtype: "GET",
                     colNames: [
-                        scope.msg("evsMbarara.location"),
                         scope.msg("evsMbarara.visitReschedule.participantId"),
-                        scope.msg("evsMbarara.visitReschedule.participantName"),
                         scope.msg("evsMbarara.visitReschedule.visitType"),
                         scope.msg("evsMbarara.visitReschedule.actualDate"),
                         scope.msg("evsMbarara.visitReschedule.plannedDate"),
-                        scope.msg("evsMbarara.visitReschedule.time"),
                         ""],
                     colModel: [
-                        {
-                            name: "location",
-                            index: 'subject.siteName'
-                        },
                         {
                             name: "participantId",
                             formatter: extendGrid,
                             index: 'subject.subjectId'
-                        },
-                        {
-                            name: "participantName",
-                            index: 'subject.name'
                         },
                         {
                             name: "visitType",
@@ -807,9 +454,6 @@
                             name: "plannedDate",
                             formatter: rowColorFormatter,
                             index: 'dateProjected'
-                        },
-                        {
-                            name: "startTime"
                         },
                         {
                             name: "print", align: "center", sortable: false, width: 60
@@ -875,11 +519,9 @@
                             } else {
                                 scope.newForm();
                                 scope.form.dto.participantId = rowData.participantId;
-                                scope.form.dto.participantName = rowData.participantName;
                                 scope.form.dto.visitType = rowData.visitType;
                                 scope.form.dto.plannedDate = rowData.plannedDate;
                                 scope.form.dto.actualDate = rowData.actualDate;
-                                scope.form.dto.startTime = rowData.startTime;
                                 scope.form.dto.visitId = extraRowData.visitId;
                                 scope.form.dto.ignoreDateLimitation = extraRowData.ignoreDateLimitation;
                                 scope.earliestDateToReturn = scope.parseDate(extraRowData.earliestDate);

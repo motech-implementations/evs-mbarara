@@ -2,6 +2,7 @@ package org.motechproject.evsmbarara.service.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
+import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.config.core.constants.ConfigurationConstants;
@@ -16,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
-
-import java.io.InputStream;
 
 @Service("configService")
 public class ConfigServiceImpl implements ConfigService {

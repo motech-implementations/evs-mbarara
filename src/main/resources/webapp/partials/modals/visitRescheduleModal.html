@@ -8,10 +8,6 @@
             <div ng-if="form.dto">
                 <div class="modal-body visit-reschedule-modal-body">
                     <div class="evs-mbarara input-group">
-                        <span class="left left input-group-addon">{{msg('evsMbarara.visitReschedule.participantName')}}</span>
-                        <div class="form-control">{{form.dto.participantName}}</div>
-                    </div>
-                    <div class="evs-mbarara input-group">
                         <span class="left left input-group-addon">{{msg('evsMbarara.visitReschedule.visitType')}}</span>
                         <div class="form-control">{{form.dto.visitType}}</div>
                     </div>
@@ -20,12 +16,6 @@
                         <input id="plannedDateInput" type="text" class="form-control datepicker" ng-if="showPlannedDate()" readonly='true' evs-mbarara-date-picker min="form.dto.minDate" max="form.dto.maxDate" placeholder="{{msg('evsMbarara.datePlaceholder')}}" ng-model="form.dto.plannedDate">
                         <input id="plannedDateTextInput" type="text" class="form-control" ng-if="!showPlannedDate()" readonly='true' ng-model="form.dto.plannedDate">
                         <span class="input-group-addon validator" ng-if="showPlannedDate()" ng-class="{'alert-danger': form.dto.plannedDate === '', 'alert-success': form.dto.plannedDate}"><i class="fa fa-fw fa-check"></i></span>
-                    </div>
-                    <div class="evs-mbarara input-group">
-                        <span class="left input-group-addon">{{msg('evsMbarara.visitReschedule.time')}}</span>
-                        <input id="startTimeInput" type="text" class="form-control" ng-if="showPlannedDate()" mds-time-picker placeholder="{{msg('evsMbarara.startTimePlaceholder')}}" ng-model="form.dto.startTime">
-                        <input id="startTimeTextInput" type="text" class="form-control" ng-if="!showPlannedDate()" readonly='true' ng-model="form.dto.startTime">
-                        <span class="input-group-addon validator" ng-if="showPlannedDate()" ng-class="{'alert-danger': form.dto.startTime === '', 'alert-success': form.dto.startTime}"><i class="fa fa-fw fa-check"></i></span>
                     </div>
                     <div class="evs-mbarara input-group prime-vaccination-schedule-modal">
                         <span class="left input-group-addon">{{msg('evsMbarara.ignoreDateLimitation')}}</span>
@@ -57,7 +47,7 @@
                 </div>
                 <div class="modal-footer">
                     <button id="printBtn" type="button" class="btn btn-primary ng-binding" ng-click="print()" ng-disabled="diablePrint">
-                        <i class="fa fa-fw fa-print"></i> {{msg('evsMbarara.screening.printCard')}}
+                        <i class="fa fa-fw fa-print"></i> {{msg('evsMbarara.printCard')}}
                     </button>
                     <div class="btn-group" role="group">
                         <button id="closeBtn" type="button" class="btn btn-default" data-dismiss="modal">{{msg('evsMbarara.close')}}</button>

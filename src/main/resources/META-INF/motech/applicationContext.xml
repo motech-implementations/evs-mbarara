@@ -30,12 +30,8 @@
             <list>
                 <value>manageEvsMbarara</value>
                 <value>evsMbararaSubjectsTab</value>
-                <value>evsMbararaScreeningBookingTab</value>
-                <value>evsMbararaPrimeVaccinationBookingTab</value>
-                <value>evsMbararaClinicVisitBookingTab</value>
                 <value>evsMbararaVisitRescheduleBookingTab</value>
                 <value>unscheduledVisitsTab</value>
-                <value>evsMbararaAdvancedSettings</value>
                 <value>evsMbararaReportsTab</value>
             </list>
         </property>

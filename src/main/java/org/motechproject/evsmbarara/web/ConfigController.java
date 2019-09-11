@@ -1,10 +1,8 @@
 package org.motechproject.evsmbarara.web;
 
-import org.joda.time.LocalTime;
-import org.joda.time.format.DateTimeFormat;
+import java.util.List;
 import org.motechproject.evsmbarara.domain.Config;
 import org.motechproject.evsmbarara.domain.enums.VisitType;
-import org.motechproject.evsmbarara.scheduler.EvsMbararaScheduler;
 import org.motechproject.evsmbarara.service.ConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
 @Controller
 public class ConfigController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigController.class);
@@ -31,9 +25,6 @@ public class ConfigController {
     @Autowired
     @Qualifier("configService")
     private ConfigService configService;
-
-    @Autowired
-    private EvsMbararaScheduler evsMbararaScheduler;
 
     @RequestMapping(value = "/evs-mbarara-config", method = RequestMethod.GET)
     @ResponseBody
@@ -46,9 +37,6 @@ public class ConfigController {
     @ResponseBody
     public Config updateConfig(@RequestBody Config config) {
         configService.updateConfig(config);
-
-        evsMbararaScheduler.unscheduleZetesUpdateJob();
-        scheduleJobs();
 
         return configService.getConfig();
     }
@@ -63,24 +51,8 @@ public class ConfigController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    public String handleException(Exception e) throws IOException {
+    public String handleException(Exception e) {
         LOGGER.error("Error while updating configs", e);
         return e.getMessage();
-    }
-
-    private void scheduleJobs() {
-        if (configService.getConfig().getEnableZetesJob()) {
-            String zetesUrl = configService.getConfig().getZetesUrl();
-            String zetesUsername = configService.getConfig().getZetesUsername();
-            String zetesPassword = configService.getConfig().getZetesPassword();
-
-            LocalTime startTime = LocalTime.parse(
-                    configService.getConfig().getStartTime(),
-                    DateTimeFormat.forPattern(Config.TIME_PICKER_FORMAT)
-            );
-            Date startDate = startTime.toDateTimeToday().toDate();
-            evsMbararaScheduler
-                .scheduleZetesUpdateJob(startDate, zetesUrl, zetesUsername, zetesPassword);
-        }
     }
 }

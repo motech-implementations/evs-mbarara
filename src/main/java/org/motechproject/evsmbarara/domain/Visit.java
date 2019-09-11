@@ -6,17 +6,16 @@ import lombok.Setter;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.LocalDate;
-import org.motechproject.commons.date.model.Time;
-import org.motechproject.mds.annotations.Entity;
-import org.motechproject.mds.annotations.EnumDisplayName;
-import org.motechproject.mds.annotations.Field;
-import org.motechproject.mds.annotations.NonEditable;
 import org.motechproject.evsmbarara.domain.enums.VisitType;
 import org.motechproject.evsmbarara.util.serializer.CustomDateDeserializer;
 import org.motechproject.evsmbarara.util.serializer.CustomDateSerializer;
 import org.motechproject.evsmbarara.util.serializer.CustomSubjectSerializer;
 import org.motechproject.evsmbarara.util.serializer.CustomVisitTypeDeserializer;
 import org.motechproject.evsmbarara.util.serializer.CustomVisitTypeSerializer;
+import org.motechproject.mds.annotations.Entity;
+import org.motechproject.mds.annotations.EnumDisplayName;
+import org.motechproject.mds.annotations.Field;
+import org.motechproject.mds.annotations.NonEditable;
 
 @Entity(recordHistory = true, maxFetchDepth = 2)
 @NoArgsConstructor
@@ -25,7 +24,6 @@ public class Visit {
     public static final String VISIT_TYPE_PROPERTY_NAME = "type";
     public static final String VISIT_PLANNED_DATE_PROPERTY_NAME = "dateProjected";
     public static final String SUBJECT_PRIME_VACCINATION_DATE_PROPERTY_NAME = "subject.primerVaccinationDate";
-    public static final String SUBJECT_NAME_PROPERTY_NAME = "subject.name";
 
     public static final String VISIT_TYPE_DISPLAY_NAME = "Visit Type";
 
@@ -33,24 +31,6 @@ public class Visit {
     @Getter
     @Setter
     private Long id;
-
-    @NonEditable
-    @Field
-    @Getter
-    @Setter
-    private Time startTime;
-
-    @NonEditable
-    @Field
-    @Getter
-    @Setter
-    private Time endTime;
-
-    @NonEditable
-    @Field
-    @Getter
-    @Setter
-    private Clinic clinic;
 
     @JsonSerialize(using = CustomSubjectSerializer.class)
     @NonEditable

@@ -1,16 +1,18 @@
 package org.motechproject.evsmbarara.web;
 
-import org.motechproject.mds.dto.LookupDto;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.motechproject.evsmbarara.constants.EvsMbararaConstants;
 import org.motechproject.evsmbarara.domain.Visit;
 import org.motechproject.evsmbarara.dto.VisitRescheduleDto;
 import org.motechproject.evsmbarara.exception.EvsMbararaLookupException;
-import org.motechproject.evsmbarara.exception.LimitationExceededException;
 import org.motechproject.evsmbarara.helper.DtoLookupHelper;
 import org.motechproject.evsmbarara.service.LookupService;
 import org.motechproject.evsmbarara.service.VisitRescheduleService;
 import org.motechproject.evsmbarara.web.domain.GridSettings;
 import org.motechproject.evsmbarara.web.domain.Records;
+import org.motechproject.mds.dto.LookupDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @PreAuthorize(EvsMbararaConstants.HAS_VISIT_RESCHEDULE_TAB_ROLE)
@@ -51,11 +49,7 @@ public class VisitRescheduleController {
     @ResponseBody
     public Object saveVisitReschedule(@PathVariable Boolean ignoreLimitation,
                                       @RequestBody VisitRescheduleDto visitRescheduleDto) {
-        try {
-            return visitRescheduleService.saveVisitReschedule(visitRescheduleDto, ignoreLimitation);
-        } catch (LimitationExceededException e) {
-            return e.getMessage();
-        }
+        return visitRescheduleService.saveVisitReschedule(visitRescheduleDto, ignoreLimitation);
     }
 
     @RequestMapping(value = "/getLookupsForVisitReschedule", method = RequestMethod.GET)

@@ -1,38 +1,6 @@
 [
   {
     "active": true,
-    "pattern": "https://**/evs-mbarara/registration/**",
-    "supportedSchemes": [
-      "BASIC",
-      "USERNAME_PASSWORD"
-    ],
-    "protocol": "HTTPS",
-    "priority": 4,
-    "rest": true,
-    "origin": "SYSTEM_MODULE_EVS_MBARARA",
-    "version": "0.27",
-    "methodsRequired": [
-      "POST"
-    ]
-  },
-  {
-    "active": true,
-    "pattern": "/**/evs-mbarara/registration/**",
-    "supportedSchemes": [
-      "BASIC",
-      "USERNAME_PASSWORD"
-    ],
-    "protocol": "HTTP",
-    "priority": 3,
-    "rest": true,
-    "origin": "SYSTEM_MODULE_EVS_MBARARA",
-    "version": "0.27",
-    "methodsRequired": [
-      "POST"
-    ]
-  },
-  {
-    "active": true,
     "pattern": "https://**/evs-mbarara/evs-mbarara-config/**",
     "supportedSchemes": [
       "BASIC",
