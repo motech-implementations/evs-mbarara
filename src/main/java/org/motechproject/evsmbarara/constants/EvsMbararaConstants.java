@@ -24,6 +24,21 @@ public final class EvsMbararaConstants {
         }
     };
 
+    public static final String API_KEY = "api_key";
+    public static final String MESSAGE_ID = "message_id";
+    public static final String STATUS_CALLBACK_URL = "status_callback_url";
+    public static final String SUBSCRIBERS = "subscribers";
+    public static final String PHONE = "phone";
+    public static final String LANGUAGE = "language";
+    public static final String SEND_SMS_IF_VOICE_FAILS = "send_sms_if_voice_fails";
+    public static final String DETECT_VOICEMAIL = "detect_voicemail_action";
+    public static final String RETRY_ATTEMPTS_SHORT = "retry_attempts_short";
+    public static final String RETRY_DELAY_SHORT = "retry_delay_short";
+    public static final String RETRY_ATTEMPTS_LONG = "retry_attempts_long";
+    public static final String RETRY_ATTEMPTS_LONG_DEFAULT = "1";
+    public static final String SUBJECT_ID = "subject_id";
+    public static final String SUBJECT_PHONE_NUMBER = "subscriber_phone";
+
     public static final String VISIT_RESCHEDULE_TAB_PERMISSION = "evsMbararaVisitRescheduleBookingTab";
     public static final String UNSCHEDULED_VISITS_TAB_PERMISSION = "unscheduledVisitsTab";
     public static final String REPORTS_TAB_PERMISSION = "evsMbararaReportsTab";

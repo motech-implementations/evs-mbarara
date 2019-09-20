@@ -31,6 +31,11 @@
   <dependencies>
     <dependency>
       <groupId>org.motechproject</groupId>
+      <artifactId>ivr</artifactId>
+      <version>${motech.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.motechproject</groupId>
       <artifactId>motech-tasks</artifactId>
       <version>${motech.version}</version>
     </dependency>

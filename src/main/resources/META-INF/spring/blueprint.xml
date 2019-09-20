@@ -20,6 +20,12 @@
     <osgi:reference id="visitDataService"
                     interface="org.motechproject.evsmbarara.repository.VisitDataService" />
 
+    <osgi:reference id="votoMessageDataService"
+      interface="org.motechproject.evsmbarara.repository.VotoMessageDataService" />
+
+    <osgi:reference id="votoLanguageDataService"
+      interface="org.motechproject.evsmbarara.repository.VotoLanguageDataService" />
+
     <osgi:reference id="visitScheduleOffsetDataService"
                     interface="org.motechproject.evsmbarara.repository.VisitScheduleOffsetDataService" />
 
@@ -46,4 +52,6 @@
     <osgi:reference id="csvImportExportService" interface="org.motechproject.mds.service.CsvImportExportService" />
 
     <osgi:reference id="schedulerService" interface="org.motechproject.scheduler.service.MotechSchedulerService" />
+
+    <osgi:reference id="outboundCallService" interface="org.motechproject.ivr.service.OutboundCallService"/>
 </beans>
