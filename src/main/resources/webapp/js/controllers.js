@@ -514,9 +514,7 @@
 
         $scope.showPlannedDate = function () {
             var isActualDateEmpty = $scope.form.dto.actualDate === null || $scope.form.dto.actualDate === "" || $scope.form.dto.actualDate === undefined;
-            var currentDate = new Date();
-            currentDate.setHours(0,0,0,0);
-            return isActualDateEmpty && ($scope.form.dto.ignoreDateLimitation || $scope.form.dto.maxDate >= currentDate );
+            return isActualDateEmpty;
         };
 
         $scope.clearActualDate = function () {

@@ -24,16 +24,17 @@ public class TabAccessController {
         List<String> availableTabs = new ArrayList<>();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if (auth.getAuthorities().contains(new SimpleGrantedAuthority(REPORTS_TAB_PERMISSION))) {
-            availableTabs.add("reports");
-        }
-
         if (auth.getAuthorities().contains(new SimpleGrantedAuthority(SUBJECTS_TAB_PERMISSION))) {
             availableTabs.add("subjects");
         }
 
         if (auth.getAuthorities().contains(new SimpleGrantedAuthority(VISIT_RESCHEDULE_TAB_PERMISSION))) {
             availableTabs.add("reschedule");
+            availableTabs.add("enrollment");
+        }
+
+        if (auth.getAuthorities().contains(new SimpleGrantedAuthority(REPORTS_TAB_PERMISSION))) {
+            availableTabs.add("reports");
         }
 
         if (auth.getAuthorities().contains(new SimpleGrantedAuthority(UNSCHEDULED_VISITS_TAB_PERMISSION))) {

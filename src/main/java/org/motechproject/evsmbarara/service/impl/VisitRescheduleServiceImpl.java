@@ -14,10 +14,11 @@ import org.motechproject.evsmbarara.domain.Visit;
 import org.motechproject.evsmbarara.domain.VisitScheduleOffset;
 import org.motechproject.evsmbarara.domain.enums.VisitType;
 import org.motechproject.evsmbarara.dto.VisitRescheduleDto;
-import org.motechproject.evsmbarara.repository.SubjectDataService;
 import org.motechproject.evsmbarara.repository.VisitDataService;
 import org.motechproject.evsmbarara.service.ConfigService;
+import org.motechproject.evsmbarara.service.EvsEnrollmentService;
 import org.motechproject.evsmbarara.service.LookupService;
+import org.motechproject.evsmbarara.service.SubjectService;
 import org.motechproject.evsmbarara.service.VisitRescheduleService;
 import org.motechproject.evsmbarara.service.VisitScheduleOffsetService;
 import org.motechproject.evsmbarara.util.QueryParamsBuilder;
@@ -40,10 +41,13 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
     private VisitScheduleOffsetService visitScheduleOffsetService;
 
     @Autowired
-    private SubjectDataService subjectDataService;
+    private SubjectService subjectService;
 
     @Autowired
     private ConfigService configService;
+
+    @Autowired
+    private EvsEnrollmentService evsEnrollmentService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -52,21 +56,18 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
         QueryParams queryParams = QueryParamsBuilder.buildQueryParams(settings, getFields(settings.getFields()));
         Records<Visit> detailsRecords = lookupService.getEntities(Visit.class, settings.getLookup(), settings.getFields(), queryParams);
 
-        Map<VisitType, VisitScheduleOffset> offsetMap = visitScheduleOffsetService.getAllAsMap();
-        List<String> boosterRelatedVisits = configService.getConfig().getBoosterRelatedVisits();
-
         List<VisitRescheduleDto> dtos = new ArrayList<>();
 
         for (Visit visit : detailsRecords.getRows()) {
 
-            Boolean boosterRelated = isBoosterRelated(visit.getType(), boosterRelatedVisits);
+            Boolean boosterRelated = isBoosterRelated(visit.getType());
             LocalDate vaccinationDate = getVaccinationDate(visit, boosterRelated);
 
             Boolean notVaccinated = true;
             Range<LocalDate> dateRange = null;
 
             if (vaccinationDate != null) {
-                dateRange = calculateEarliestAndLatestDate(visit.getType(), offsetMap, vaccinationDate);
+                dateRange = calculateEarliestAndLatestDate(visit.getType(), vaccinationDate);
                 notVaccinated = false;
             }
 
@@ -89,6 +90,35 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
         return new VisitRescheduleDto(updateVisitDetailsWithDto(visit, visitRescheduleDto));
     }
 
+    private Visit updateVisitDetailsWithDto(Visit visit, VisitRescheduleDto dto) {
+        visit.setIgnoreDateLimitation(dto.getIgnoreDateLimitation());
+        visit.setDateProjected(dto.getPlannedDate());
+
+        if (VisitType.BOOST_VACCINATION_DAY.equals(dto.getVisitType()) && dto.getActualDate() != null) {
+            Subject subject = visit.getSubject();
+
+            if (!dto.getActualDate().equals(subject.getBoosterVaccinationDate())) {
+                visit.setDate(dto.getActualDate());
+                subject.setBoosterVaccinationDate(dto.getActualDate());
+
+                visitDataService.update(visit);
+                subjectService.update(subject);
+
+                return visit;
+            }
+        } else if (dto.getActualDate() != null) {
+            visit.setDate(dto.getActualDate());
+
+            evsEnrollmentService.completeCampaign(visit);
+        } else if (dto.getPlannedDate() != null) {
+            visit.setDateProjected(dto.getPlannedDate());
+
+            evsEnrollmentService.createEnrollmentOrReenrollCampaign(visit);
+        }
+
+        return visitDataService.update(visit);
+    }
+
     private void validateDates(VisitRescheduleDto dto, Visit visit) {
         if (dto.getActualDate() != null) {
             validateActualDate(dto);
@@ -98,49 +128,33 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
     }
 
     private void validateActualDate(VisitRescheduleDto dto) {
-        if (dto.getActualDate().isAfter(new LocalDate())) {
+        if (dto.getActualDate().isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("Actual Date cannot be in the future.");
         }
     }
 
     private void validatePlannedDate(VisitRescheduleDto dto, Visit visit) {
         LocalDate plannedDate = dto.getPlannedDate();
-        //If plannedDate isn't actually updated then can be in past
-        if (plannedDate.isBefore(LocalDate.now()) && !plannedDate.equals(visit.getDateProjected())) {
-            throw new IllegalArgumentException("Planned Date cannot be in the past.");
-        }
 
-        if (!dto.getIgnoreDateLimitation()) {
-            Map<VisitType, VisitScheduleOffset> visitTypeOffsetMap = visitScheduleOffsetService.getAllAsMap();
-            List<String> boosterRelatedVisits = configService.getConfig().getBoosterRelatedVisits();
+        //If plannedDate isn't actually updated don't need to validate
+        if (!dto.getIgnoreDateLimitation() && !plannedDate.equals(visit.getDateProjected())) {
+            Range<LocalDate> dateRange = calculateEarliestAndLatestDate(visit);
 
-            Range<LocalDate> dateRange = calculateEarliestAndLatestDate(visit, visitTypeOffsetMap, boosterRelatedVisits);
+            if (dateRange != null) {
+                LocalDate earliestDate = dateRange.getMin();
+                LocalDate latestDate = dateRange.getMax();
 
-            if (dateRange == null) {
-                throw new IllegalArgumentException("Cannot calculate Earliest and Latest Date");
-            }
+                if (plannedDate.isBefore(earliestDate)) {
+                    throw new IllegalArgumentException(
+                        String.format("The date should be after %s but is %s", earliestDate, plannedDate));
+                }
 
-            LocalDate earliestDate = dateRange.getMin();
-            LocalDate latestDate = dateRange.getMax();
-
-            if (plannedDate.isBefore(earliestDate) || plannedDate.isAfter(latestDate)) {
-                throw new IllegalArgumentException(String.format("The date should be between %s and %s but is %s",
-                        earliestDate, latestDate, plannedDate));
+                if (latestDate != null &&  plannedDate.isAfter(latestDate)) {
+                    throw new IllegalArgumentException(
+                        String.format("The date should be before %s but is %s", latestDate, plannedDate));
+                }
             }
         }
-    }
-
-    private Visit updateVisitDetailsWithDto(Visit visit, VisitRescheduleDto dto) {
-        visit.setIgnoreDateLimitation(dto.getIgnoreDateLimitation());
-        visit.setDateProjected(dto.getPlannedDate());
-        visit.setDate(dto.getActualDate());
-        if (VisitType.BOOST_VACCINATION_DAY.equals(dto.getVisitType())) {
-            Subject subject = visit.getSubject();
-            subject.setBoosterVaccinationDate(dto.getActualDate());
-            subjectDataService.update(subject);
-        }
-
-        return visitDataService.update(visit);
     }
 
     private Map<String, Object> getFields(String json) throws IOException {
@@ -152,32 +166,44 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
         }
     }
 
-    private Range<LocalDate> calculateEarliestAndLatestDate(Visit visit, Map<VisitType, VisitScheduleOffset> visitTypeOffset,
-                                                            List<String> boosterRelatedVisits) {
-        Boolean boosterRelated = isBoosterRelated(visit.getType(), boosterRelatedVisits);
+    private Range<LocalDate> calculateEarliestAndLatestDate(Visit visit) {
+        Boolean boosterRelated = isBoosterRelated(visit.getType());
         LocalDate vaccinationDate = getVaccinationDate(visit, boosterRelated);
 
         if (vaccinationDate == null) {
             return null;
         }
 
-        return calculateEarliestAndLatestDate(visit.getType(), visitTypeOffset, vaccinationDate);
+        return calculateEarliestAndLatestDate(visit.getType(), vaccinationDate);
     }
 
-    private Range<LocalDate> calculateEarliestAndLatestDate(VisitType visitType, Map<VisitType, VisitScheduleOffset> visitTypeOffset,
-                                                            LocalDate vaccinationDate) {
+    private Range<LocalDate> calculateEarliestAndLatestDate(VisitType visitType, LocalDate vaccinationDate) {
+        LocalDate minDate = LocalDate.now();
+        LocalDate maxDate = null;
+
+        Map<VisitType, VisitScheduleOffset> visitTypeOffset = visitScheduleOffsetService.getAllAsMap();
+
         if (visitTypeOffset == null) {
-            return null;
+            return new Range<>(minDate, maxDate);
         }
 
         VisitScheduleOffset offset = visitTypeOffset.get(visitType);
 
         if (offset == null) {
-            return null;
+            return new Range<>(minDate, maxDate);
         }
 
-        LocalDate minDate = vaccinationDate.plusDays(offset.getEarliestDateOffset());
-        LocalDate maxDate = vaccinationDate.plusDays(offset.getLatestDateOffset());
+        if (offset.getEarliestDateOffset() != null) {
+            LocalDate date = vaccinationDate.plusDays(offset.getEarliestDateOffset());
+
+            if (date.isAfter(minDate)) {
+                minDate = date;
+            }
+        }
+
+        if (offset.getEarliestDateOffset() != null) {
+            maxDate = vaccinationDate.plusDays(offset.getLatestDateOffset());
+        }
 
         return new Range<>(minDate, maxDate);
     }
@@ -190,7 +216,9 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
         }
     }
 
-    private Boolean isBoosterRelated(VisitType visitType, List<String> boosterRelatedVisits) {
+    private Boolean isBoosterRelated(VisitType visitType) {
+        List<String> boosterRelatedVisits = configService.getConfig().getBoosterRelatedVisits();
+
         return boosterRelatedVisits.contains(visitType.getDisplayValue());
     }
 }

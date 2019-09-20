@@ -512,10 +512,6 @@
                                 }
 
                                 scope.showRescheduleModal(scope.msg('evsMbarara.visitReschedule.cannotReschedule'), scope.msg(message));
-                            } else if (extraRowData.latestDate === undefined || extraRowData.latestDate === null || extraRowData.latestDate === "") {
-                                scope.visitForPrint = elem.getRowData(rowId);
-                                scope.form = null;
-                                scope.showRescheduleModal(scope.msg('evsMbarara.visitReschedule.cannotReschedule'), scope.msg('evsMbarara.visitReschedule.visitNotInRescheduleWindow'));
                             } else {
                                 scope.newForm();
                                 scope.form.dto.participantId = rowData.participantId;
@@ -523,15 +519,24 @@
                                 scope.form.dto.plannedDate = rowData.plannedDate;
                                 scope.form.dto.actualDate = rowData.actualDate;
                                 scope.form.dto.visitId = extraRowData.visitId;
+
                                 scope.form.dto.ignoreDateLimitation = extraRowData.ignoreDateLimitation;
                                 scope.earliestDateToReturn = scope.parseDate(extraRowData.earliestDate);
-                                scope.latestDateToReturn = scope.parseDate(extraRowData.latestDate);
+
+                                if (extraRowData.latestDate === undefined || extraRowData.latestDate === null || extraRowData.latestDate === "") {
+                                    scope.latestDateToReturn = null;
+                                } else {
+                                    scope.latestDateToReturn = scope.parseDate(extraRowData.latestDate);
+                                }
+
                                 scope.form.dto.minActualDate = null;
                                 scope.form.dto.maxActualDate = new Date();
+
                                 if (!scope.form.dto.ignoreDateLimitation) {
                                     var currentDate = new Date();
                                     currentDate.setHours(0,0,0,0);
                                     var plannedDate = scope.parseDate(scope.form.dto.plannedDate);
+
                                     if (scope.earliestDateToReturn < currentDate && plannedDate >= currentDate) {
                                         scope.form.dto.minDate = currentDate;
                                     } else if (plannedDate < currentDate) {

@@ -12,4 +12,6 @@ public interface SubjectService {
     Subject create(Subject record);
 
     Subject update(Subject record);
+
+    void subjectDataChanged(Subject subject);
 }

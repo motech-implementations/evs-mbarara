@@ -31,6 +31,11 @@
   <dependencies>
     <dependency>
       <groupId>org.motechproject</groupId>
+      <artifactId>message-campaign</artifactId>
+      <version>${motech.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.motechproject</groupId>
       <artifactId>ivr</artifactId>
       <version>${motech.version}</version>
     </dependency>
@@ -354,6 +359,7 @@
               org.aopalliance.aop,
               org.motechproject.server.config.service,
               org.motechproject.config.service,
+              org.motechproject.messagecampaign.service,
               org.motechproject.tasks.service,
               org.motechproject.mds.service,
               org.springframework.web.multipart.commons,

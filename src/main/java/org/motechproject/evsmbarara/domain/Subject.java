@@ -23,6 +23,7 @@ import org.motechproject.evsmbarara.util.serializer.CustomVisitListDeserializer;
 import org.motechproject.mds.annotations.Cascade;
 import org.motechproject.mds.annotations.Entity;
 import org.motechproject.mds.annotations.Field;
+import org.motechproject.mds.annotations.Ignore;
 import org.motechproject.mds.annotations.NonEditable;
 import org.motechproject.mds.annotations.UIDisplayable;
 
@@ -144,6 +145,16 @@ public class Subject {
         } else {
             this.phoneNumber = phoneNumber;
         }
+    }
+
+    @Ignore
+    public void addVisit(Visit visit) {
+        visits.add(visit);
+    }
+
+    @Ignore
+    public void removeVisit(Visit visit) {
+        visits.remove(visit);
     }
 
     @Override

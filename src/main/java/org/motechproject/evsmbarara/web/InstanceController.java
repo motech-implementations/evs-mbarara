@@ -25,6 +25,7 @@ import org.motechproject.evsmbarara.domain.Subject;
 import org.motechproject.evsmbarara.exception.EvsMbararaLookupException;
 import org.motechproject.evsmbarara.helper.DtoLookupHelper;
 import org.motechproject.evsmbarara.service.LookupService;
+import org.motechproject.evsmbarara.service.SubjectService;
 import org.motechproject.evsmbarara.service.impl.SubjectCsvImportCustomizer;
 import org.motechproject.evsmbarara.util.QueryParamsBuilder;
 import org.motechproject.evsmbarara.util.SubjectVisitsMixin;
@@ -41,9 +42,12 @@ import org.motechproject.mds.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -67,6 +71,9 @@ public class InstanceController {
 
     @Autowired
     private SubjectCsvImportCustomizer subjectCsvImportCustomizer;
+
+    @Autowired
+    private SubjectService subjectService;
 
     @Autowired
     private EntityService entityService;
@@ -156,6 +163,14 @@ public class InstanceController {
             }
         }
         return ret;
+    }
+
+    @PreAuthorize("hasRole('manageEvsMbarara')")
+    @RequestMapping(value = "/subjectDataChanged", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<String> subjectDataChanged(@RequestBody Subject subject) {
+        subjectService.subjectDataChanged(subject);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private long importCsv(long entityId, MultipartFile csvFile) {

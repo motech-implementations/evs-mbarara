@@ -100,7 +100,7 @@ public class DtoLookupHelperTest {
         assertEquals(2, returnedFields.keySet().size());
         assertEquals(START_DATE, returnedMinDate);
         assertEquals(END_DATE, returnedMaxDate);
-        assertEquals(12, returnedVisitTypes.size());
+        assertEquals(13, returnedVisitTypes.size());
     }
 
     @Test
@@ -148,7 +148,7 @@ public class DtoLookupHelperTest {
         assertEquals(2, returnedFields.keySet().size());
         assertEquals(START_DATE, returnedMinDate);
         assertEquals(END_DATE, returnedMaxDate);
-        assertEquals(12, returnedVisitTypes.size());
+        assertEquals(13, returnedVisitTypes.size());
     }
 
     @Test
@@ -193,7 +193,7 @@ public class DtoLookupHelperTest {
         assertEquals(2, returnedFields.keySet().size());
         assertEquals(START_DATE, returnedMinDate);
         assertEquals(END_DATE, returnedMaxDate);
-        assertEquals(12, returnedVisitTypes.size());
+        assertEquals(13, returnedVisitTypes.size());
     }
 
     @Test
@@ -211,7 +211,7 @@ public class DtoLookupHelperTest {
         assertEquals("Find By Participant Id And Visit Type Set", returnedSettings.getLookup());
         assertEquals(2, returnedFields.keySet().size());
         assertEquals(SUBJECT_ID_VAL, subjectId);
-        assertEquals(12, returnedVisitTypes.size());
+        assertEquals(13, returnedVisitTypes.size());
     }
 
     @Test
@@ -236,7 +236,7 @@ public class DtoLookupHelperTest {
         assertEquals(SUBJECT_ID_VAL, subjectId);
         assertEquals(START_DATE, returnedMinDate);
         assertEquals(END_DATE, returnedMaxDate);
-        assertEquals(12, returnedVisitTypes.size());
+        assertEquals(13, returnedVisitTypes.size());
     }
 
     @Test
@@ -263,7 +263,7 @@ public class DtoLookupHelperTest {
         assertEquals(END_DATE, returnedMaxActualDate);
         assertEquals(START_DATE_2, returnedMinPlannedDate);
         assertEquals(END_DATE_2, returnedMaxPlannedDate);
-        assertEquals(12, returnedVisitTypes.size());
+        assertEquals(13, returnedVisitTypes.size());
     }
 
     @Test

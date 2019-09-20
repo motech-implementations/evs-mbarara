@@ -23,7 +23,9 @@ public class Visit {
 
     public static final String VISIT_TYPE_PROPERTY_NAME = "type";
     public static final String VISIT_PLANNED_DATE_PROPERTY_NAME = "dateProjected";
-    public static final String SUBJECT_PRIME_VACCINATION_DATE_PROPERTY_NAME = "subject.primerVaccinationDate";
+    public static final String VISIT_DATE_PROPERTY_NAME = "date";
+
+    public static final String SUBJECT_PHONE_NUMBER_PROPERTY_NAME = "subject.phoneNumber";
 
     public static final String VISIT_TYPE_DISPLAY_NAME = "Visit Type";
 
@@ -75,6 +77,11 @@ public class Visit {
     @Getter
     @Setter
     private Boolean ignoreDateLimitation = false;
+
+    public Visit(Subject subject, VisitType type) {
+        this.subject = subject;
+        this.type = type;
+    }
 
     @Override
     public String toString() {

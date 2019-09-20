@@ -57,12 +57,6 @@ public class VisitRescheduleDto {
     @Setter
     private LocalDate latestDate;
 
-    @JsonDeserialize(using = CustomDateDeserializer.class)
-    @JsonSerialize(using = CustomDateSerializer.class)
-    @Getter
-    @Setter
-    private LocalDate earliestWindowDate;
-
     @Getter
     @Setter
     private Boolean ignoreDateLimitation;

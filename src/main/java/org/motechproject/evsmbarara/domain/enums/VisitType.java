@@ -2,9 +2,6 @@ package org.motechproject.evsmbarara.domain.enums;
 
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public enum VisitType {
     PRIME_VACCINATION_DAY("D0 Prime Vaccination"),
     D1_VISIT("D1 Sub-study visit"),
@@ -35,13 +32,5 @@ public enum VisitType {
             }
         }
         return null;
-    }
-
-    public static List<String> getDisplayValues() {
-        List<String> displayValues = new ArrayList<>();
-        for (VisitType visitType : VisitType.values()) {
-            displayValues.add(visitType.getDisplayValue());
-        }
-        return displayValues;
     }
 }
