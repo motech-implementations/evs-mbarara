@@ -160,9 +160,7 @@ public class EvsEnrollmentServiceImpl implements EvsEnrollmentService {
 
     @Override
     public void unenrollAndRemoveEnrollment(Visit visit) {
-        if (!VisitType.PRIME_VACCINATION_DAY.equals(visit.getType())) {
-            unenrollAndRemoveEnrollment(visit.getSubject().getSubjectId(), visit.getType().getDisplayValue());
-        }
+        unenrollAndRemoveEnrollment(visit.getSubject().getSubjectId(), visit.getType().getDisplayValue());
     }
 
     private void reenrollSubjectWithNewDate(String subjectId, String campaignName, LocalDate date) {

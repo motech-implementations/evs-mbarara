@@ -61,7 +61,6 @@ public class Subject {
     @UIDisplayable(position = 3)
     @JsonSerialize(using = CustomDateSerializer.class)
     @JsonDeserialize(using = CustomDateDeserializer.class)
-    @NonEditable
     @Field
     @Getter
     @Setter
@@ -70,7 +69,6 @@ public class Subject {
     @UIDisplayable(position = 4)
     @JsonSerialize(using = CustomDateSerializer.class)
     @JsonDeserialize(using = CustomDateDeserializer.class)
-    @NonEditable
     @Field
     @Getter
     @Setter
