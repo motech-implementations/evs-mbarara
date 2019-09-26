@@ -58,7 +58,7 @@ public final class EvsMbararaConstants {
     public static final String VOTO_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     public static final String VISIT_RESCHEDULE_TAB_PERMISSION = "evsMbararaVisitRescheduleBookingTab";
-    public static final String UNSCHEDULED_VISITS_TAB_PERMISSION = "unscheduledVisitsTab";
+    public static final String UNSCHEDULED_VISITS_TAB_PERMISSION = "evsMbararaUnscheduledVisitsTab";
     public static final String REPORTS_TAB_PERMISSION = "evsMbararaReportsTab";
     public static final String SUBJECTS_TAB_PERMISSION = "evsMbararaSubjectsTab";
 

@@ -11,7 +11,7 @@
       "manageEvsMbarara",
       "evsMbararaSubjectsTab",
       "evsMbararaVisitRescheduleBookingTab",
-      "unscheduledVisitsTab",
+      "evsMbararaUnscheduledVisitsTab",
       "evsMbararaReportsTab",
       "viewUI"
     ]
@@ -22,7 +22,7 @@
       "manageEvsMbarara",
       "evsMbararaSubjectsTab",
       "evsMbararaVisitRescheduleBookingTab",
-      "unscheduledVisitsTab",
+      "evsMbararaUnscheduledVisitsTab",
       "evsMbararaReportsTab",
       "viewUI"
     ]

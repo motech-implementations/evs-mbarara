@@ -31,7 +31,7 @@
                 <value>manageEvsMbarara</value>
                 <value>evsMbararaSubjectsTab</value>
                 <value>evsMbararaVisitRescheduleBookingTab</value>
-                <value>unscheduledVisitsTab</value>
+                <value>evsMbararaUnscheduledVisitsTab</value>
                 <value>evsMbararaReportsTab</value>
             </list>
         </property>
