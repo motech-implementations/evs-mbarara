@@ -11,10 +11,6 @@ import java.util.Set;
  */
 public enum Language {
     English("eng"),
-    Krio("kri"),
-    Limba("lma"),
-    Susu("sus"),
-    Temne("tem"),
     Luganda("lu"),
     Runyankole("ru");
 
