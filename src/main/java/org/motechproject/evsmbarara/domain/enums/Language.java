@@ -16,7 +16,7 @@ public enum Language {
     Susu("sus"),
     Temne("tem"),
     Luganda("lu"),
-    Runyakole("ru");
+    Runyankole("ru");
 
     @Getter
     private String code;
