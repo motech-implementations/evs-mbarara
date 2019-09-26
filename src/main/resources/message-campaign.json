@@ -204,7 +204,7 @@
         "languages": [
           "en"
         ],
-        "messageKey": "clinic-visit-reminder-today",
+        "messageKey": "clinic-visit-reminder-today-booster",
         "timeOffset": "0 Day",
         "startTime": "7:00"
       }
@@ -223,7 +223,7 @@
         "languages": [
           "en"
         ],
-        "messageKey": "clinic-visit-reminder-1-day",
+        "messageKey": "clinic-visit-reminder-1-day-booster",
         "timeOffset": "-1 Day",
         "startTime": "7:00"
       },
@@ -236,7 +236,7 @@
         "languages": [
           "en"
         ],
-        "messageKey": "clinic-visit-reminder-today",
+        "messageKey": "clinic-visit-reminder-today-booster",
         "timeOffset": "0 Day",
         "startTime": "7:00"
       }
