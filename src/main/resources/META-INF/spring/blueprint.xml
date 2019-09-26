@@ -20,6 +20,9 @@
     <osgi:reference id="visitDataService"
                     interface="org.motechproject.evsmbarara.repository.VisitDataService" />
 
+    <osgi:reference id="ivrAndSmsStatisticReportDataService"
+      interface="org.motechproject.evsmbarara.repository.IvrAndSmsStatisticReportDataService" />
+
     <osgi:reference id="subjectEnrollmentsDataService"
       interface="org.motechproject.evsmbarara.repository.SubjectEnrollmentsDataService" />
 
@@ -34,6 +37,9 @@
 
     <osgi:reference id="visitScheduleOffsetDataService"
                     interface="org.motechproject.evsmbarara.repository.VisitScheduleOffsetDataService" />
+
+    <osgi:reference id="callDetailRecordDataService"
+      interface="org.motechproject.ivr.repository.CallDetailRecordDataService" />
 
     <osgi:service ref="configService" interface="org.motechproject.evsmbarara.service.ConfigService" />
 
@@ -61,7 +67,12 @@
 
     <osgi:reference id="csvImportExportService" interface="org.motechproject.mds.service.CsvImportExportService" />
 
-    <osgi:reference id="schedulerService" interface="org.motechproject.scheduler.service.MotechSchedulerService" />
+    <osgi:reference id="schedulerService"
+      interface="org.motechproject.scheduler.service.MotechSchedulerService">
+        <osgi:reference-listener ref="jobImporter"/>
+    </osgi:reference>
+
+    <osgi:reference id="messageCampaignService" interface="org.motechproject.messagecampaign.service.MessageCampaignService" />
 
     <osgi:reference id="outboundCallService" interface="org.motechproject.ivr.service.OutboundCallService"/>
 </beans>

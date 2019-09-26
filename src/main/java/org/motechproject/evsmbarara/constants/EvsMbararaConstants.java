@@ -19,10 +19,14 @@ public final class EvsMbararaConstants {
     public static final Map<String, Float> REPORT_COLUMN_WIDTHS = new LinkedHashMap<String, Float>() {
         {
             put("Participant Id", 64f); //NO CHECKSTYLE MagicNumber
-            put("Age", 24f);
             put("SMS", 32f);
         }
     };
+
+    public static final String REPORT_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DAILY_REPORT_EVENT = "daily_report_event";
+    public static final String DAILY_REPORT_EVENT_START_DATE = "daily_report_event_start_date";
+    public static final String DAILY_REPORT_EVENT_START_HOUR = "00:01";
 
     public static final String API_KEY = "api_key";
     public static final String MESSAGE_ID = "message_id";
@@ -39,6 +43,20 @@ public final class EvsMbararaConstants {
     public static final String SUBJECT_ID = "subject_id";
     public static final String SUBJECT_PHONE_NUMBER = "subscriber_phone";
 
+    public static final String IVR_CALL_DETAIL_RECORD_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSS";
+    public static final String IVR_CALL_DETAIL_RECORD_MOTECH_TIMESTAMP_FIELD = "motechTimestamp";
+
+    public static final String IVR_CALL_DETAIL_RECORD_STATUS_INITIATED = "INITIATED";
+    public static final String IVR_CALL_DETAIL_RECORD_STATUS_FINISHED = "Finished";
+    public static final String IVR_CALL_DETAIL_RECORD_STATUS_FAILED = "Failed";
+    public static final String IVR_CALL_DETAIL_RECORD_STATUS_SUBMITTED = "Submitted";
+    public static final String IVR_CALL_DETAIL_RECORD_NUMBER_OF_ATTEMPTS = "attempts";
+    public static final String IVR_CALL_DETAIL_RECORD_END_TIMESTAMP = "end_timestamp";
+    public static final String IVR_CALL_DETAIL_RECORD_START_TIMESTAMP = "start_timestamp";
+    public static final String IVR_CALL_DETAIL_RECORD_MESSAGE_SECOND_COMPLETED = "message_seconds_completed";
+
+    public static final String VOTO_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
     public static final String VISIT_RESCHEDULE_TAB_PERMISSION = "evsMbararaVisitRescheduleBookingTab";
     public static final String UNSCHEDULED_VISITS_TAB_PERMISSION = "unscheduledVisitsTab";
     public static final String REPORTS_TAB_PERMISSION = "evsMbararaReportsTab";
@@ -51,7 +69,13 @@ public final class EvsMbararaConstants {
 
     public static final String UNSCHEDULED_VISITS_NAME = "Unscheduled_Visits";
     public static final String VISIT_RESCHEDULE_NAME = "VisitReschedule";
-    public static final String CAPACITY_REPORT_NAME = "CapacityReport";
+
+    public static final String DAILY_CLINIC_VISIT_SCHEDULE_REPORT_NAME = "DailyClinicVisitScheduleReport";
+    public static final String FOLLOW_UPS_MISSED_CLINIC_VISITS_REPORT_NAME = "FollowupsMissedClinicVisitsReport";
+    public static final String M_AND_E_MISSED_CLINIC_VISITS_REPORT_NAME = "MandEMissedClinicVisitsReport";
+    public static final String OPTS_OUT_OF_MOTECH_MESSAGES_REPORT_NAME = "ParticipantsWhoOptOutOfReceivingMotechMessagesReport";
+    public static final String IVR_AND_SMS_STATISTIC_REPORT_NAME = "NumberOfTimesParticipantsListenedToEachMessageReport";
+    public static final String SUBJECT_ENROLLMENTS_NAME = "ParticipantEnrollments";
 
     public static final Map<String, String> VISIT_RESCHEDULE_FIELDS_MAP = new LinkedHashMap<String, String>() {
         {
@@ -70,15 +94,67 @@ public final class EvsMbararaConstants {
         }
     };
 
-    public static final Map<String, String> CAPACITY_REPORT_FIELDS_MAP = new LinkedHashMap<String, String>() {
+    public static final Map<String, String> DAILY_CLINIC_VISIT_SCHEDULE_REPORT_MAP = new LinkedHashMap<String, String>() {
         {
-            put("Date", "date");
-            put("Max. Capacity", "maxCapacity");
-            put("Available Capacity", "availableCapacity");
-            put("Screening Slot Remaining", "screeningSlotRemaining");
-            put("Vaccine Slot Remaining", "vaccineSlotRemaining");
+            put("Planned Visit Date", "dateProjected");
+            put("Participant ID",    "subject.subjectId");
+            put("Phone Number",      "subject.phoneNumber");
+            put("Visit type",        "type");
         }
     };
+
+    public static final Map<String, String> FOLLOW_UPS_MISSED_CLINIC_VISITS_REPORT_MAP = new LinkedHashMap<String, String>() {
+        {
+            put("Participant ID",           "subject.subjectId");
+            put("Visit type",               "type");
+            put("Planned Visit Date",       "dateProjected");
+            put("No Of Days Exceeded Visit", "noOfDaysExceededVisit");
+        }
+    };
+
+    public static final Map<String, String> M_AND_E_MISSED_CLINIC_VISITS_REPORT_MAP = new LinkedHashMap<String, String>() {
+        {
+            put("Participant Id",           "subject.subjectId");
+            put("Phone",                    "subject.phoneNumber");
+            put("Visit type",               "type");
+            put("Planned Visit Date",       "dateProjected");
+            put("No Of Days Exceeded Visit", "noOfDaysExceededVisit");
+        }
+    };
+
+    public static final Map<String, String> OPTS_OUT_OF_MOTECH_MESSAGES_REPORT_MAP = new LinkedHashMap<String, String>() {
+        {
+            put("Participant Id",           "subject.subjectId");
+            put("Date of Unenrollment",     "dateOfUnenrollment");
+        }
+    };
+
+
+    public static final Map<String, String> IVR_AND_SMS_STATISTIC_REPORT_MAP = new LinkedHashMap<String, String>() {
+        {
+            put("Participant Id",           "subject.subjectId");
+            put("Phone",                    "subject.phoneNumber");
+            put("Message ID",               "messageId");
+            put("Sent Date",                "sendDate");
+            put("Expected Duration",        "expectedDuration");
+            put("Time Listened To",         "timeListenedTo");
+            put("Percent Listened",         "messagePercentListened");
+            put("Received Date",            "receivedDate");
+            put("No. of Attempts",          "numberOfAttempts");
+            put("SMS",                      "sms");
+            put("SMS Received Date",        "smsReceivedDate");
+        }
+    };
+
+    public static final Map<String, String> SUBJECT_ENROLLMENTS_MAP = new LinkedHashMap<String, String>() {
+        {
+            put("Participant Id",           "subject.subjectId");
+            put("Status",                   "status");
+        }
+    };
+
+    public static final List<String> AVAILABLE_LOOKUPS_FOR_SUBJECT_ENROLLMENTS =
+        new ArrayList<>(Arrays.asList("Find By Participant Id", "Find By Status"));
 
     public static final List<String> AVAILABLE_LOOKUPS_FOR_VISIT_RESCHEDULE = new ArrayList<>(Arrays.asList(
             "Find By Visit Planned Date",
@@ -90,8 +166,28 @@ public final class EvsMbararaConstants {
     public static final List<String> AVAILABLE_LOOKUPS_FOR_UNSCHEDULED = new ArrayList<>(
         Collections.singletonList("Find By Participant Id"));
 
-    public static final List<String> AVAILABLE_LOOKUPS_FOR_CAPACITY_REPORT = new ArrayList<>(Collections.singletonList(
-            "Find By Location"));
+    public static final List<String> AVAILABLE_LOOKUPS_FOR_DAILY_CLINIC_VISIT_SCHEDULE_REPORT =
+        new ArrayList<>(Arrays.asList("Find By Planned Visit Date Range",
+            "Find By Planned Visit Date Range And Type", "Find By Type", "Find By Participant Id"));
+
+    public static final List<String> AVAILABLE_LOOKUPS_FOR_FOLLOWUPS_MISSED_CLINIC_VISITS_REPORT =
+        new ArrayList<>(Arrays.asList("Find By Planned Visit Date Range", "Find By Planned Visit Date Range And Type"));
+
+    public static final List<String> AVAILABLE_LOOKUPS_FOR_M_AND_E_MISSED_CLINIC_VISITS_REPORT =
+        new ArrayList<>(Arrays.asList("Find By Participant Id", "Find By Planned Visit Date Range",
+            "Find By Planned Visit Date Range And Type"));
+
+    public static final List<String> AVAILABLE_LOOKUPS_FOR_OPTS_OUT_OF_MOTECH_MESSAGES_REPORT =
+        new ArrayList<>(Arrays.asList("Find By Participant Id", "Find By Date Of Unenrollment"));
+
+    public static final List<String> AVAILABLE_LOOKUPS_FOR_IVR_AND_SMS_STATISTIC_REPORT =
+        new ArrayList<>(Arrays.asList("Find By Participant Id", "Find By Participant Phone Number",
+            "Find By Sent Date", "Find By Received Date", "Find By SMS Status",
+            "Find By SMS Status And Sent Date", "Find By Message Id And Sent Date"));
+
+    public static final List<String> AVAILABLE_LOOKUPS_FOR_SUBJECTS =
+        new ArrayList<>(Arrays.asList("Find By Primer Vaccination Date Range", "Find By Booster Vaccination Date Range",
+            "Find By Participant Id", "Find By exact Phone Number", "Find By Visit Type And Actual Date Range"));
 
     private EvsMbararaConstants() {
     }

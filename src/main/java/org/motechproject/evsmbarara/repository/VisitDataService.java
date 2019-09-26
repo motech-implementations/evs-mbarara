@@ -32,7 +32,7 @@ public interface VisitDataService extends MotechDataService<Visit> {
             customOperator = Constants.Operators.MATCHES_CASE_INSENSITIVE) String subjectId);
 
     @Lookup
-    List<Visit> findByVisitType(@LookupField(name = "type") VisitType type);
+    List<Visit> findByType(@LookupField(name = "type") VisitType type);
 
     @Lookup
     List<Visit> findByVisitActualDate(
@@ -59,6 +59,25 @@ public interface VisitDataService extends MotechDataService<Visit> {
     List<Visit> findByVisitTypeAndActualDate(
             @LookupField(name = "type") VisitType type,
             @LookupField(name = "date") Range<LocalDate> date);
+
+
+    @Lookup
+    List<Visit> findByPlannedVisitDateRange(
+        @LookupField(name = "dateProjected") Range<LocalDate> plannedDate);
+
+    @Lookup
+    List<Visit> findByPlannedVisitDate(
+        @LookupField(name = "dateProjected") LocalDate plannedDate);
+
+    @Lookup
+    List<Visit> findByPlannedVisitDateRangeAndType(
+        @LookupField(name = "type") VisitType type,
+        @LookupField(name = "dateProjected") Range<LocalDate> date);
+
+    @Lookup
+    List<Visit> findByPlannedVisitDateAndType(
+        @LookupField(name = "type") VisitType type,
+        @LookupField(name = "dateProjected") LocalDate date);
 
     /**
      * Reschedule Screen Lookups
@@ -119,4 +138,78 @@ public interface VisitDataService extends MotechDataService<Visit> {
             @LookupField(name = "subject.subjectId",
                     customOperator = Constants.Operators.MATCHES_CASE_INSENSITIVE) String subjectId,
             @LookupField(name = "type") Set<VisitType> typeSet);
+
+    /**
+     * Followups Missed Clinic Visits Report Lookups
+     */
+
+    @Lookup
+    List<Visit> findByPlannedDateLessAndActualDateEqAndSubjectPhoneNumberEq(
+        @LookupField(name = "subject.phoneNumber", customOperator = Constants.Operators.EQ) String phoneNumber,
+        @LookupField(name = "dateProjected", customOperator = Constants.Operators.LT) LocalDate dateProjected,
+        @LookupField(name = "date", customOperator = Constants.Operators.EQ) LocalDate date);
+
+    @Lookup
+    List<Visit> findByPlannedVisitDateEq(
+        @LookupField(name = "subject.phoneNumber", customOperator = Constants.Operators.EQ) String phoneNumber,
+        @LookupField(name = "dateProjected") LocalDate dateProjected,
+        @LookupField(name = "date", customOperator = Constants.Operators.EQ) LocalDate date);
+
+    @Lookup
+    List<Visit> findByPlannedVisitDateAndTypeEq(
+        @LookupField(name = "subject.phoneNumber", customOperator = Constants.Operators.EQ) String phoneNumber,
+        @LookupField(name = "dateProjected") LocalDate dateProjected,
+        @LookupField(name = "type") VisitType visitType,
+        @LookupField(name = "date", customOperator = Constants.Operators.EQ) LocalDate date);
+
+    @Lookup
+    List<Visit> findByPlannedVisitDateRangeEq(
+        @LookupField(name = "subject.phoneNumber", customOperator = Constants.Operators.EQ) String phoneNumber,
+        @LookupField(name = "dateProjected") Range<LocalDate> dateRange,
+        @LookupField(name = "date", customOperator = Constants.Operators.EQ) LocalDate date);
+
+    @Lookup
+    List<Visit> findByPlannedVisitDateRangeAndTypeEq(
+        @LookupField(name = "subject.phoneNumber", customOperator = Constants.Operators.EQ) String phoneNumber,
+        @LookupField(name = "dateProjected") Range<LocalDate> dateProjectedRange,
+        @LookupField(name = "type") VisitType visitType,
+        @LookupField(name = "date", customOperator = Constants.Operators.EQ) LocalDate date);
+
+    /**
+     * M&E Missed Clinic Visits Report Lookups
+     */
+
+    @Lookup
+    List<Visit> findByPlannedVisitDateLessAndActualVisitDate(
+        @LookupField(name = "dateProjected", customOperator = Constants.Operators.LT) LocalDate dateProjected,
+        @LookupField(name = "date", customOperator = Constants.Operators.EQ) LocalDate date);
+
+    @Lookup(name = "Find By Participant Id And Planned Visit Date And Actual Visit Date")
+    List<Visit> findBySubjectIdAndPlannedVisitDateAndActualVisitDate(
+        @LookupField(name = "subject.subjectId", customOperator = Constants.Operators.MATCHES_CASE_INSENSITIVE) String subjectId,
+        @LookupField(name = "dateProjected", customOperator = Constants.Operators.LT) LocalDate dateProjected,
+        @LookupField(name = "date", customOperator = Constants.Operators.EQ) LocalDate date);
+
+    @Lookup
+    List<Visit> findByPlannedVisitDateAndActualVisitDate(
+        @LookupField(name = "dateProjected") LocalDate dateProjected,
+        @LookupField(name = "date", customOperator = Constants.Operators.EQ) LocalDate date);
+
+    @Lookup
+    List<Visit> findByPlannedVisitDateAndTypeAndActualVisitDate(
+        @LookupField(name = "dateProjected") LocalDate dateProjected,
+        @LookupField(name = "type") VisitType visitType,
+        @LookupField(name = "date", customOperator = Constants.Operators.EQ) LocalDate date);
+
+    @Lookup
+    List<Visit> findByPlannedVisitDateRangeAndActualVisitDate(
+        @LookupField(name = "dateProjected") Range<LocalDate> dateRange,
+        @LookupField(name = "date", customOperator = Constants.Operators.EQ) LocalDate date);
+
+    @Lookup
+    List<Visit> findByPlannedVisitDateRangeAndTypeAndActualVisitDate(
+        @LookupField(name = "dateProjected") Range<LocalDate> dateProjectedRange,
+        @LookupField(name = "type") VisitType visitType,
+        @LookupField(name = "date", customOperator = Constants.Operators.EQ) LocalDate date);
+
 }

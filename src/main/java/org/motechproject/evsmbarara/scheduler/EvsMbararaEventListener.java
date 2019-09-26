@@ -2,9 +2,11 @@ package org.motechproject.evsmbarara.scheduler;
 
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
+import org.motechproject.evsmbarara.constants.EvsMbararaConstants;
 import org.motechproject.evsmbarara.exception.EvsInitiateCallException;
 import org.motechproject.evsmbarara.helper.IvrCallHelper;
 import org.motechproject.evsmbarara.service.EvsEnrollmentService;
+import org.motechproject.evsmbarara.service.ReportService;
 import org.motechproject.messagecampaign.EventKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +19,20 @@ public class EvsMbararaEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(EvsMbararaEventListener.class);
 
     @Autowired
+    private ReportService reportService;
+
+    @Autowired
     private EvsEnrollmentService evsEnrollmentService;
 
     @Autowired
     private IvrCallHelper ivrCallHelper;
+
+    @MotechListener(subjects = { EvsMbararaConstants.DAILY_REPORT_EVENT })
+    public void generateDailyReport(MotechEvent event) {
+        LOGGER.info("Started generation of daily reports...");
+        reportService.generateIvrAndSmsStatisticReports();
+        LOGGER.info("Daily Reports generation completed");
+    }
 
     @MotechListener(subjects = EventKeys.CAMPAIGN_COMPLETED)
     public void completeCampaign(MotechEvent event) {

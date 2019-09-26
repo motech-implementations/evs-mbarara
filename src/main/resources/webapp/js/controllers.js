@@ -328,6 +328,11 @@
                 if (!$scope.lookupBy[$scope.buildLookupFieldName(field)]) {
                     $scope.lookupBy[$scope.buildLookupFieldName(field)] = {min: '', max: ''};
                 }
+            } else if ($scope.isSetLookup(field)) {
+                type = 'set';
+                if (!$scope.lookupBy[$scope.buildLookupFieldName(field)]) {
+                    $scope.lookupBy[$scope.buildLookupFieldName(field)] = [];
+                }
             }
 
             return '../evs-mbarara/resources/partials/lookups/{0}-{1}.html'.format(type, value);
@@ -335,6 +340,10 @@
 
         $scope.isRangedLookup = function(field) {
             return $scope.isLookupFieldOfType(field, 'RANGE');
+        };
+
+        $scope.isSetLookup = function(field) {
+            return $scope.isLookupFieldOfType(field, 'SET');
         };
 
         $scope.isLookupFieldOfType = function(field, type) {
@@ -705,28 +714,236 @@
         };
     });
 
-    controllers.controller('EvsMbararaReportsCtrl', function ($scope, $http, $timeout) {
-        $scope.getLookups("../evs-mbarara/getLookupsForCapacityReport");
+    controllers.controller('EvsMbararaReportsCtrl', function ($scope, $routeParams) {
+        $scope.reportType = $routeParams.reportType;
+        $scope.reportName = "";
 
         $scope.$parent.selectedFilter.startDate = undefined;
         $scope.$parent.selectedFilter.endDate = undefined;
         $scope.$parent.selectedFilter = $scope.filters[0];
 
+        $scope.buildColumnModel = function (colModel) {
+            var newColModel = colModel;
+            for (var i in colModel) {
+                if(!colModel[i].hasOwnProperty('formatoptions') && colModel[i].hasOwnProperty('formatter')) {
+                    newColModel[i].formatter = eval("(" + colModel[i].formatter + ")");
+                }
+            }
+            return newColModel;
+        };
+
+        $scope.buildColumnNames = function (colNames) {
+            var newColNames = colNames;
+            for(var i in colNames) {
+                newColNames[i] = $scope.msg(colNames[i]);
+            }
+            return newColNames;
+        };
+
+        var url;
+        switch($scope.reportType){
+            case "dailyClinicVisitScheduleReport":
+                url = "../evs-mbarara/getLookupsForDailyClinicVisitScheduleReport";
+                $scope.reportName = $scope.msg('evsMbarara.reports.dailyClinicVisitScheduleReport');
+                break;
+            case "followupsMissedClinicVisitsReport":
+                url = "../evs-mbarara/getLookupsForFollowupsMissedClinicVisitsReport";
+                $scope.reportName = $scope.msg('evsMbarara.reports.followupsMissedClinicVisitsReport');
+                break;
+            case "MandEMissedClinicVisitsReport":
+                url = "../evs-mbarara/getLookupsForMandEMissedClinicVisitsReport";
+                $scope.reportName = $scope.msg('evsMbarara.reports.MandEMissedClinicVisitsReport');
+                break;
+            case "ivrAndSmsStatisticReport":
+                url = "../evs-mbarara/getLookupsForIvrAndSmsStatisticReport";
+                $scope.reportName = $scope.msg('evsMbarara.reports.ivrAndSmsStatisticReport');
+                break;
+            case "optsOutOfMotechMessagesReport":
+                url = "../evs-mbarara/getLookupsForOptsOutOfMotechMessagesReport";
+                $scope.reportName = $scope.msg('evsMbarara.reports.optsOutOfMotechMessagesReport');
+                break;
+        }
+        $scope.getLookups(url);
+
         $scope.exportInstance = function() {
-            var sortColumn, sortDirection, url = "../evs-mbarara/exportInstances/capacityReports";
+            var url, rows, page, sortColumn, sortDirection;
+
+            switch($scope.reportType){
+                case "dailyClinicVisitScheduleReport":
+                    url = "../evs-mbarara/exportDailyClinicVisitScheduleReport";
+                    break;
+                case "followupsMissedClinicVisitsReport":
+                    url = "../evs-mbarara/exportFollowupsMissedClinicVisitsReport";
+                    break;
+                case "MandEMissedClinicVisitsReport":
+                    url = "../evs-mbarara/exportMandEMissedClinicVisitsReport";
+                    break;
+                case "optsOutOfMotechMessagesReport":
+                    url = "../evs-mbarara/exportOptsOutOfMotechMessagesReport";
+                    break;
+                case "ivrAndSmsStatisticReport":
+                    url = "../evs-mbarara/exportIvrAndSmsStatisticReport";
+                    break;
+            }
             url = url + "?outputFormat=" + $scope.exportFormat;
             url = url + "&exportRecords=" + $scope.actualExportRecords;
-            url = url + "&dateFilter=" + $scope.selectedFilter.dateFilter;
 
-            if ($scope.selectedFilter.startDate) {
-                url = url + "&startDate=" + $scope.selectedFilter.startDate;
+            if ($scope.checkboxModel.exportWithOrder === true) {
+                sortColumn = $('#reportTable').getGridParam('sortname');
+                sortDirection = $('#reportTable').getGridParam('sortorder');
+
+                url = url + "&sortColumn=" + sortColumn;
+                url = url + "&sortDirection=" + sortDirection;
             }
 
-            if ($scope.selectedFilter.endDate) {
-                url = url + "&endDate=" + $scope.selectedFilter.endDate;
+            if ($scope.checkboxModel.exportWithFilter === true) {
+                url = url + "&dateFilter=" + $scope.selectedFilter.dateFilter;
+
+                if ($scope.selectedFilter.startDate) {
+                    url = url + "&startDate=" + $scope.selectedFilter.startDate;
+                }
+
+                if ($scope.selectedFilter.endDate) {
+                    url = url + "&endDate=" + $scope.selectedFilter.endDate;
+                }
             }
 
             $scope.exportInstanceWithUrl(url);
+        };
+
+        $scope.backToEntityList = function() {
+            window.location.replace('#/evsMbarara/reports');
+        };
+    });
+
+    controllers.controller('EvsMbararaEnrollmentCtrl', function ($scope, $http) {
+        var url = "../evs-mbarara/getLookupsForEnrollments";
+        $scope.getLookups(url);
+
+        $scope.enrollInProgress = false;
+
+        $scope.refreshGrid = function() {
+            $scope.lookupRefresh = !$scope.lookupRefresh;
+        };
+
+        $scope.refreshGridAndStayOnSamePage = function() {
+            $scope.gridRefresh = !$scope.gridRefresh;
+        };
+
+        $scope.enroll = function(subjectId) {
+            motechConfirm("evsMbarara.enrollSubject.ConfirmMsg", "evsMbarara.enrollSubject.ConfirmTitle",
+              function (response) {
+                  if (!response) {
+                      return;
+                  } else {
+                      $scope.enrollInProgress = true;
+                      $http.post('../evs-mbarara/enrollSubject', subjectId)
+                        .success(function(response) {
+                            motechAlert('evsMbarara.enrollment.enrollSubject.success', 'evsMbarara.enrollment.enrolledSubject');
+                            $scope.refreshGridAndStayOnSamePage();
+                            $scope.enrollInProgress = false;
+                        })
+                        .error(function(response) {
+                            motechAlert('evsMbarara.enrollment.enrollSubject.error', 'evsMbarara.enrollment.error', response);
+                            $scope.refreshGridAndStayOnSamePage();
+                            $scope.enrollInProgress = false;
+                        });
+                  }
+              });
+        };
+
+        $scope.unenroll = function(subjectId) {
+            motechConfirm("evsMbarara.unenrollSubject.ConfirmMsg", "evsMbarara.unenrollSubject.ConfirmTitle",
+              function (response) {
+                  if (!response) {
+                      return;
+                  } else {
+                      $scope.enrollInProgress = true;
+                      $http.post('../evs-mbarara/unenrollSubject', subjectId)
+                        .success(function(response) {
+                            motechAlert('evsMbarara.enrollment.unenrollSubject.success', 'evsMbarara.enrollment.unenrolledSubject');
+                            $scope.refreshGridAndStayOnSamePage();
+                            $scope.enrollInProgress = false;
+                        })
+                        .error(function(response) {
+                            motechAlert('evsMbarara.enrollment.unenrollSubject.error', 'evsMbarara.enrollment.error', response);
+                            $scope.refreshGridAndStayOnSamePage();
+                            $scope.enrollInProgress = false;
+                        });
+                  }
+              });
+        };
+
+        $scope.goToAdvanced = function(subjectId) {
+            $.ajax({
+                url: '../evs-mbarara/checkAdvancedPermissions',
+                success:  function(data) {
+                    window.location.replace('#/evsMbarara/enrollmentAdvanced/' + subjectId);
+                },
+                async: false
+            });
+        };
+
+        $scope.exportInstance = function() {
+            var url, rows, page, sortColumn, sortDirection;
+
+            url = "../evs-mbarara/exportSubjectEnrollment";
+            url = url + "?outputFormat=" + $scope.exportFormat;
+            url = url + "&exportRecords=" + $scope.actualExportRecords;
+
+            if ($scope.checkboxModel.exportWithOrder === true) {
+                sortColumn = $('#enrollmentTable').getGridParam('sortname');
+                sortDirection = $('#enrollmentTable').getGridParam('sortorder');
+
+                url = url + "&sortColumn=" + sortColumn;
+                url = url + "&sortDirection=" + sortDirection;
+            }
+
+            $scope.exportInstanceWithUrl(url);
+        };
+    });
+
+    controllers.controller('EvsMbararaEnrollmentAdvancedCtrl', function ($scope, $http, $timeout, $routeParams) {
+        $scope.enrollInProgress = false;
+
+        $scope.backToEnrolments = function() {
+            window.location.replace('#/evsMbarara/enrollment');
+        };
+
+        $scope.selectedSubjectId = $routeParams.subjectId;
+
+        $scope.refreshGrid = function() {
+            $scope.lookupRefresh = !$scope.lookupRefresh;
+        };
+
+        $scope.enroll = function(campaignName) {
+            $scope.enrollInProgress = true;
+            $http.get('../evs-mbarara/enrollCampaign/' + $scope.selectedSubjectId + '/' + campaignName)
+              .success(function(response) {
+                  motechAlert('evsMbarara.enrollment.enrollSubject.success', 'evsMbarara.enrollment.enrolledSubject');
+                  $scope.refreshGrid();
+                  $scope.enrollInProgress = false;
+              })
+              .error(function(response) {
+                  motechAlert('evsMbarara.enrollment.enrollSubject.error', 'evsMbarara.enrollment.error', response);
+                  $scope.refreshGrid();
+                  $scope.enrollInProgress = false;
+              });
+        };
+
+        $scope.unenroll = function(campaignName) {
+            $scope.enrollInProgress = true;
+            $http.get('../evs-mbarara/unenrollCampaign/' + $scope.selectedSubjectId + '/' + campaignName)
+              .success(function(response) {
+                  motechAlert('evsMbarara.enrollment.unenrollSubject.success', 'evsMbarara.enrollment.unenrolledSubject');
+                  $scope.refreshGrid();
+                  $scope.enrollInProgress = false;
+              })
+              .error(function(response) {
+                  motechAlert('evsMbarara.enrollment.unenrollSubject.error', 'evsMbarara.enrollment.error', response);
+                  $scope.refreshGrid();
+                  $scope.enrollInProgress = false;
+              });
         };
     });
 

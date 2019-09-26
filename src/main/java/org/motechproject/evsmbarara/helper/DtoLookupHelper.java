@@ -12,12 +12,17 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.commons.api.Range;
 import org.motechproject.evsmbarara.constants.EvsMbararaConstants;
+import org.motechproject.evsmbarara.domain.SubjectEnrollments;
 import org.motechproject.evsmbarara.domain.UnscheduledVisit;
 import org.motechproject.evsmbarara.domain.Visit;
 import org.motechproject.evsmbarara.domain.enums.DateFilter;
+import org.motechproject.evsmbarara.domain.enums.EnrollmentStatus;
 import org.motechproject.evsmbarara.domain.enums.VisitType;
+import org.motechproject.evsmbarara.exception.EvsMbararaLookupException;
 import org.motechproject.evsmbarara.web.domain.GridSettings;
 import org.motechproject.mds.dto.LookupDto;
 import org.motechproject.mds.dto.LookupFieldDto;
@@ -137,6 +142,224 @@ public final class DtoLookupHelper {
         }
 
         return lookupDto;
+    }
+
+    public static GridSettings changeLookupAndOrderForFollowupsMissedClinicVisitsReport(GridSettings settings) throws IOException { //NO CHECKSTYLE CyclomaticComplexity
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        Map<String, String> fieldsMap = new HashMap<>();
+        String newLookupName;
+
+        changeOrderForFollowupsMissedClinicVisitsReport(settings);
+        if (StringUtils.isBlank(settings.getFields())) {
+            settings.setFields("{}");
+        }
+        if (StringUtils.isBlank(settings.getLookup())) {
+            settings.setLookup("Find By Planned Date Less And Actual Date Eq And Subject Phone Number Eq");
+            fieldsMap.put(Visit.VISIT_PLANNED_DATE_PROPERTY_NAME, LocalDate.now().toString(formatter));
+            fieldsMap.put(Visit.VISIT_DATE_PROPERTY_NAME, null);
+            settings.setFields(OBJECT_MAPPER.writeValueAsString(fieldsMap));
+        } else {
+            fieldsMap = getFieldsMap(settings.getFields());
+
+            switch (settings.getLookup()) {
+                case "Find By Planned Visit Date":
+                case "Find By Planned Visit Date And Type":
+                    LocalDate date = getLocalDateFromLookupFields(settings.getFields(),
+                        Visit.VISIT_PLANNED_DATE_PROPERTY_NAME);
+
+                    LocalDate maxDate = LocalDate.now().minusDays(1);
+                    if (date == null || date.isAfter(maxDate)) {
+                        return null;
+                    }
+                    fieldsMap.put(Visit.VISIT_DATE_PROPERTY_NAME, null);
+
+                    newLookupName = settings.getLookup() + " Eq";
+                    break;
+                case "Find By Planned Visit Date Range":
+                case "Find By Planned Visit Date Range And Type":
+                    Range<LocalDate> dateRange = getDateRangeFromLookupFields(settings.getFields(),
+                        Visit.VISIT_PLANNED_DATE_PROPERTY_NAME);
+                    if (!checkAndUpdateDateRangeForFollowupsMissedClinicVisitsReport(dateRange, settings)) {
+                        return null;
+                    }
+                    fieldsMap.put(Visit.VISIT_DATE_PROPERTY_NAME, null);
+
+                    newLookupName = settings.getLookup() + " Eq";
+                    break;
+                default:
+                    fieldsMap.put(Visit.VISIT_PLANNED_DATE_PROPERTY_NAME, LocalDate.now().toString(formatter));
+                    fieldsMap.put(Visit.VISIT_DATE_PROPERTY_NAME, null);
+
+                    newLookupName = settings.getLookup() + " Less";
+                    break;
+            }
+            settings.setLookup(newLookupName);
+        }
+        fieldsMap.put(Visit.SUBJECT_PHONE_NUMBER_PROPERTY_NAME, null);
+        settings.setFields(OBJECT_MAPPER.writeValueAsString(fieldsMap));
+        return settings;
+    }
+
+    public static GridSettings changeLookupAndOrderForMandEMissedClinicVisitsReport(GridSettings settings) throws IOException { //NO CHECKSTYLE CyclomaticComplexity
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        Map<String, String> fieldsMap = new HashMap<>();
+        String newLookupName;
+
+        changeOrderForFollowupsMissedClinicVisitsReport(settings);
+        if (StringUtils.isBlank(settings.getFields())) {
+            settings.setFields("{}");
+        }
+        if (StringUtils.isBlank(settings.getLookup())) {
+            settings.setLookup("Find By Planned Visit Date Less And Actual Visit Date");
+            fieldsMap.put(Visit.VISIT_PLANNED_DATE_PROPERTY_NAME, LocalDate.now().toString(formatter));
+        } else {
+            fieldsMap = getFieldsMap(settings.getFields());
+
+            switch (settings.getLookup()) {
+                case "Find By Planned Visit Date":
+                case "Find By Planned Visit Date And Type":
+                    LocalDate date = getLocalDateFromLookupFields(settings.getFields(),
+                        Visit.VISIT_PLANNED_DATE_PROPERTY_NAME);
+
+                    LocalDate maxDate = LocalDate.now().minusDays(1);
+                    if (date == null || date.isAfter(maxDate)) {
+                        return null;
+                    }
+
+                    newLookupName = settings.getLookup() + " And Actual Visit Date";
+                    break;
+                case "Find By Planned Visit Date Range":
+                case "Find By Planned Visit Date Range And Type":
+                    Range<LocalDate> dateRange = getDateRangeFromLookupFields(settings.getFields(),
+                        Visit.VISIT_PLANNED_DATE_PROPERTY_NAME);
+                    if (!checkAndUpdateDateRangeForFollowupsMissedClinicVisitsReport(dateRange, settings)) {
+                        return null;
+                    }
+
+                    newLookupName = settings.getLookup() + " And Actual Visit Date";
+                    break;
+                default:
+                    fieldsMap.put(Visit.VISIT_PLANNED_DATE_PROPERTY_NAME, LocalDate.now().toString(formatter));
+
+                    newLookupName = settings.getLookup() + " And Planned Visit Date And Actual Visit Date";
+                    break;
+            }
+            settings.setLookup(newLookupName);
+        }
+
+        fieldsMap.put(Visit.VISIT_DATE_PROPERTY_NAME, null);
+        settings.setFields(OBJECT_MAPPER.writeValueAsString(fieldsMap));
+        return settings;
+    }
+
+    public static GridSettings changeLookupAndOrderForOptsOutOfMotechMessagesReport(GridSettings settings) throws IOException {
+        Map<String, Object> fieldsMap = new HashMap<>();
+
+        if (StringUtils.isBlank(settings.getFields())) {
+            settings.setFields("{}");
+        }
+
+        if (StringUtils.isBlank(settings.getLookup())) {
+            settings.setLookup("Find By Status");
+        } else {
+            fieldsMap = getFields(settings.getFields());
+
+            String newLookupName = settings.getLookup() + " And Status";
+            settings.setLookup(newLookupName);
+        }
+
+        fieldsMap.put(SubjectEnrollments.STATUS_PROPERTY_NAME, EnrollmentStatus.UNENROLLED.toString());
+        settings.setFields(OBJECT_MAPPER.writeValueAsString(fieldsMap));
+        return settings;
+    }
+
+    private static boolean checkAndUpdateDateRangeForFollowupsMissedClinicVisitsReport(Range<LocalDate> dateRange, GridSettings settings) {
+        if (dateRange == null) {
+            return false;
+        }
+        LocalDate maxDate = LocalDate.now().minusDays(1);
+        if (dateRange.getMin() != null && dateRange.getMin().isAfter(maxDate)) {
+            return false;
+        } else if (dateRange.getMax() == null || dateRange.getMax().isAfter(maxDate)) {
+            settings.setFields(setNewMaxDateInRangeFields(settings.getFields(), Visit.VISIT_PLANNED_DATE_PROPERTY_NAME, maxDate));
+        }
+        return true;
+    }
+
+    private static void changeOrderForFollowupsMissedClinicVisitsReport(GridSettings settings)
+    {
+        if (StringUtils.isNotBlank(settings.getSortColumn())) {
+            String sortColumn = settings.getSortColumn();
+            if ("planedVisitDate".equals(sortColumn) || "noOfDaysExceededVisit".equals(sortColumn)) {
+                settings.setSortColumn(Visit.VISIT_PLANNED_DATE_PROPERTY_NAME);
+                if ("noOfDaysExceededVisit".equals(sortColumn)) {
+                    if ("asc".equals(settings.getSortDirection())) {
+                        settings.setSortDirection("desc");
+                    } else {
+                        settings.setSortDirection("asc");
+                    }
+                }
+            }
+        }
+        if (StringUtils.isBlank(settings.getFields())) {
+            settings.setFields("{}");
+        }
+    }
+
+    private static Object getObjectFromLookupFields(String lookupFields, String fieldName) {
+        Map<String, Object> fieldsMap;
+        try {
+            fieldsMap = getFields(lookupFields);
+        } catch (IOException e) {
+            throw new EvsMbararaLookupException("Invalid lookup params", e);
+        }
+        return fieldsMap.get(fieldName);
+    }
+
+    private static LocalDate getLocalDateFromLookupFields(String lookupFields, String dateName) {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        return formatter.parseLocalDate((String) getObjectFromLookupFields(lookupFields, dateName));
+    }
+
+    private static Range<LocalDate> getDateRangeFromLookupFields(String lookupFields, String dateName) {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        LocalDate min = null;
+        LocalDate max = null;
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> rangeMap = (Map<String, String>) getObjectFromLookupFields(lookupFields, dateName);
+        if (StringUtils.isNotBlank(rangeMap.get("min"))) {
+            min = formatter.parseLocalDate(rangeMap.get("min"));
+        }
+        if (StringUtils.isNotBlank(rangeMap.get("max"))) {
+            max = formatter.parseLocalDate(rangeMap.get("max"));
+        }
+        if (max != null && min != null && max.isBefore(min)) {
+            return null;
+        }
+        return new Range<>(min, max);
+    }
+
+    private static String setNewMaxDateInRangeFields(String lookupFields, String dateName, LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        Map<String, Object> fieldsMap;
+
+        try {
+            fieldsMap = getFields(lookupFields);
+        } catch (IOException e) {
+            throw new EvsMbararaLookupException("Invalid lookup params", e);
+        }
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> rangeMap = (Map<String, String>) fieldsMap.get(dateName);
+        rangeMap.remove("max");
+        rangeMap.put("max", date.toString(formatter));
+
+        try {
+            return OBJECT_MAPPER.writeValueAsString(fieldsMap);
+        } catch (IOException e) {
+            throw new EvsMbararaLookupException("Invalid lookup params", e);
+        }
     }
 
     private static Map<String, String> getDateRangeFromFilter(GridSettings settings) {

@@ -1,13 +1,11 @@
 package org.motechproject.evsmbarara.web;
 
-
 import static org.apache.commons.lang.CharEncoding.UTF_8;
 import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.APPLICATION_PDF_CONTENT;
 import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.TEXT_CSV_CONTENT;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
@@ -17,26 +15,26 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.evsmbarara.constants.EvsMbararaConstants;
+import org.motechproject.evsmbarara.domain.IvrAndSmsStatisticReport;
+import org.motechproject.evsmbarara.domain.SubjectEnrollments;
 import org.motechproject.evsmbarara.domain.UnscheduledVisit;
 import org.motechproject.evsmbarara.domain.Visit;
-import org.motechproject.evsmbarara.dto.CapacityReportDto;
+import org.motechproject.evsmbarara.dto.IvrAndSmsStatisticReportDto;
+import org.motechproject.evsmbarara.dto.MissedVisitsReportDto;
+import org.motechproject.evsmbarara.dto.OptsOutOfMotechMessagesReportDto;
 import org.motechproject.evsmbarara.dto.UnscheduledVisitDto;
 import org.motechproject.evsmbarara.dto.VisitRescheduleDto;
 import org.motechproject.evsmbarara.exception.EvsMbararaExportException;
 import org.motechproject.evsmbarara.exception.EvsMbararaLookupException;
 import org.motechproject.evsmbarara.helper.DtoLookupHelper;
 import org.motechproject.evsmbarara.service.ExportService;
-import org.motechproject.evsmbarara.service.ReportService;
 import org.motechproject.evsmbarara.template.PdfBasicTemplate;
 import org.motechproject.evsmbarara.template.PdfExportTemplate;
 import org.motechproject.evsmbarara.template.XlsBasicTemplate;
 import org.motechproject.evsmbarara.template.XlsExportTemplate;
-import org.motechproject.evsmbarara.util.ExcelTableWriter;
-import org.motechproject.evsmbarara.util.PdfTableWriter;
 import org.motechproject.evsmbarara.util.QueryParamsBuilder;
 import org.motechproject.evsmbarara.web.domain.GridSettings;
 import org.motechproject.mds.query.QueryParams;
-import org.motechproject.mds.service.impl.csv.writer.CsvTableWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,9 +59,6 @@ public class ExportController {
     @Autowired
     private ExportService exportService;
 
-    @Autowired
-    private ReportService reportService;
-
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @RequestMapping(value = "/exportInstances/visitReschedule", method = RequestMethod.GET)
@@ -86,19 +81,70 @@ public class ExportController {
                 UnscheduledVisitDto.class, UnscheduledVisit.class, EvsMbararaConstants.UNSCHEDULED_VISIT_FIELDS_MAP);
     }
 
-    @RequestMapping(value = "/exportInstances/capacityReports", method = RequestMethod.GET)
-    public void exportCapacityReports(GridSettings settings, @RequestParam String exportRecords,
-                                      @RequestParam String outputFormat, HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "/exportDailyClinicVisitScheduleReport", method = RequestMethod.GET)
+    public void exportDailyClinicVisitScheduleReport(GridSettings settings, @RequestParam String exportRecords,
+        @RequestParam String outputFormat, HttpServletResponse response) throws IOException {
 
-        List<CapacityReportDto> capacityReportDtoList = reportService.generateCapacityReports(settings);
+        exportEntity(settings, exportRecords, outputFormat, response, EvsMbararaConstants.DAILY_CLINIC_VISIT_SCHEDULE_REPORT_NAME,
+            null, Visit.class, EvsMbararaConstants.DAILY_CLINIC_VISIT_SCHEDULE_REPORT_MAP);
+    }
 
-        Integer recordsCount = StringUtils.equalsIgnoreCase(exportRecords, "all") ? null : Integer.valueOf(exportRecords);
+    @RequestMapping(value = "/exportFollowupsMissedClinicVisitsReport", method = RequestMethod.GET)
+    public void exportFollowupsMissedClinicVisitsReport(GridSettings settings, @RequestParam String exportRecords,
+        @RequestParam String outputFormat, HttpServletResponse response) throws IOException {
 
-        if (recordsCount != null && capacityReportDtoList.size() > recordsCount) {
-            capacityReportDtoList = capacityReportDtoList.subList(0, recordsCount);
+        GridSettings newSettings = DtoLookupHelper.changeLookupAndOrderForFollowupsMissedClinicVisitsReport(settings);
+
+        if (newSettings == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid lookups params");
+        } else {
+            exportEntity(newSettings, exportRecords, outputFormat, response, EvsMbararaConstants.FOLLOW_UPS_MISSED_CLINIC_VISITS_REPORT_NAME,
+                MissedVisitsReportDto.class, Visit.class, EvsMbararaConstants.FOLLOW_UPS_MISSED_CLINIC_VISITS_REPORT_MAP);
         }
+    }
 
-        exportEntity(outputFormat, response, EvsMbararaConstants.CAPACITY_REPORT_NAME, capacityReportDtoList, EvsMbararaConstants.CAPACITY_REPORT_FIELDS_MAP);
+    @RequestMapping(value = "/exportMandEMissedClinicVisitsReport", method = RequestMethod.GET)
+    public void exportMandEMissedClinicVisitsReport(GridSettings settings, @RequestParam String exportRecords,
+        @RequestParam String outputFormat, HttpServletResponse response) throws IOException {
+
+        GridSettings newSettings = DtoLookupHelper.changeLookupAndOrderForMandEMissedClinicVisitsReport(settings);
+
+        if (newSettings == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid lookups params");
+        } else {
+            exportEntity(newSettings, exportRecords, outputFormat, response, EvsMbararaConstants.M_AND_E_MISSED_CLINIC_VISITS_REPORT_NAME,
+                MissedVisitsReportDto.class, Visit.class, EvsMbararaConstants.M_AND_E_MISSED_CLINIC_VISITS_REPORT_MAP);
+        }
+    }
+
+    @RequestMapping(value = "/exportOptsOutOfMotechMessagesReport", method = RequestMethod.GET)
+    public void exportOptsOutOfMotechMessagesReport(GridSettings settings, @RequestParam String exportRecords,
+        @RequestParam String outputFormat, HttpServletResponse response) throws IOException {
+
+        GridSettings newSettings = DtoLookupHelper.changeLookupAndOrderForOptsOutOfMotechMessagesReport(settings);
+
+        if (newSettings == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid lookups params");
+        } else {
+            exportEntity(newSettings, exportRecords, outputFormat, response, EvsMbararaConstants.OPTS_OUT_OF_MOTECH_MESSAGES_REPORT_NAME,
+                OptsOutOfMotechMessagesReportDto.class, SubjectEnrollments.class, EvsMbararaConstants.OPTS_OUT_OF_MOTECH_MESSAGES_REPORT_MAP);
+        }
+    }
+
+    @RequestMapping(value = "/exportIvrAndSmsStatisticReport", method = RequestMethod.GET)
+    public void exportIvrAndSmsStatisticReport(GridSettings settings, @RequestParam String exportRecords,
+        @RequestParam String outputFormat, HttpServletResponse response) throws IOException {
+
+        exportEntity(settings, exportRecords, outputFormat, response, EvsMbararaConstants.IVR_AND_SMS_STATISTIC_REPORT_NAME,
+            IvrAndSmsStatisticReportDto.class, IvrAndSmsStatisticReport.class, EvsMbararaConstants.IVR_AND_SMS_STATISTIC_REPORT_MAP);
+    }
+
+    @RequestMapping(value = "/exportSubjectEnrollment", method = RequestMethod.GET)
+    public void exportSubjectEnrollment(GridSettings settings, @RequestParam String exportRecords,
+        @RequestParam String outputFormat, HttpServletResponse response) throws IOException {
+
+        exportEntity(settings, exportRecords, outputFormat, response, EvsMbararaConstants.SUBJECT_ENROLLMENTS_NAME,
+            null, SubjectEnrollments.class, EvsMbararaConstants.SUBJECT_ENROLLMENTS_MAP);
     }
 
     @ExceptionHandler
@@ -144,31 +190,6 @@ public class ExportController {
         } else {
             return objectMapper.readValue(gridSettings.getFields(), new TypeReference<LinkedHashMap>() {
             }); //NO CHECKSTYLE WhitespaceAround
-        }
-    }
-
-    private void exportEntity(String outputFormat, HttpServletResponse response, String fileNameBeginning, List<?> entities,
-                              Map<String, String> headerMap) throws IOException {
-
-        setResponseData(response, outputFormat, fileNameBeginning);
-
-        try {
-            if (PDF_EXPORT_FORMAT.equals(outputFormat)) {
-                PdfTableWriter tableWriter = new PdfTableWriter(new PdfExportTemplate(response.getOutputStream()));
-
-                exportService.exportEntity(entities, headerMap, tableWriter);
-            } else if (CSV_EXPORT_FORMAT.equals(outputFormat)) {
-                CsvTableWriter tableWriter = new CsvTableWriter(response.getWriter());
-
-                exportService.exportEntity(entities, headerMap, tableWriter);
-            } else if (XLS_EXPORT_FORMAT.equals(outputFormat)) {
-                ExcelTableWriter tableWriter = new ExcelTableWriter(new XlsExportTemplate(response.getOutputStream()));
-
-                exportService.exportEntity(entities, headerMap, tableWriter);
-            }
-        } catch (IOException | EvsMbararaLookupException | EvsMbararaExportException e) {
-            LOGGER.debug(e.getMessage(), e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

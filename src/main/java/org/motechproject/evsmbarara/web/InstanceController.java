@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.evsmbarara.constants.EvsMbararaConstants;
 import org.motechproject.evsmbarara.domain.Subject;
 import org.motechproject.evsmbarara.exception.EvsMbararaLookupException;
-import org.motechproject.evsmbarara.helper.DtoLookupHelper;
 import org.motechproject.evsmbarara.service.LookupService;
 import org.motechproject.evsmbarara.service.SubjectService;
 import org.motechproject.evsmbarara.service.impl.SubjectCsvImportCustomizer;
@@ -58,10 +56,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class InstanceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InstanceController.class);
-
-    private static final List<String> SUBJECT_AVAILABLE_LOOKUPS = new ArrayList<>(Arrays.asList(
-            "Find By Primer Vaccination Date Range", "Find By Booster Vaccination Date Range",
-            "Find By Participant Id", "Find By exact Phone Number", "Find by Visit Type and Actual Date Range"));
 
     @Autowired
     private LookupService lookupService;
@@ -156,10 +150,10 @@ public class InstanceController {
             LOGGER.error(e.getMessage(), e);
             return null;
         }
-
+        List<String> lookupList = EvsMbararaConstants.AVAILABLE_LOOKUPS_FOR_SUBJECTS;
         for (LookupDto lookupDto : availableLookups) {
-            if (SUBJECT_AVAILABLE_LOOKUPS.contains(lookupDto.getLookupName())) {
-                ret.add(DtoLookupHelper.changeVisitTypeLookupOptionsOrder(lookupDto));
+            if (lookupList.contains(lookupDto.getLookupName())) {
+                ret.add(lookupDto);
             }
         }
         return ret;

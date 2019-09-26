@@ -1,8 +1,14 @@
 package org.motechproject.evsmbarara.web;
 
+import java.util.ArrayList;
 import java.util.List;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.motechproject.commons.date.model.Time;
+import org.motechproject.commons.date.util.DateUtil;
 import org.motechproject.evsmbarara.domain.Config;
 import org.motechproject.evsmbarara.domain.enums.VisitType;
+import org.motechproject.evsmbarara.scheduler.EvsMbararaScheduler;
 import org.motechproject.evsmbarara.service.ConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +32,9 @@ public class ConfigController {
     @Qualifier("configService")
     private ConfigService configService;
 
+    @Autowired
+    private EvsMbararaScheduler evsMbararaScheduler;
+
     @RequestMapping(value = "/evs-mbarara-config", method = RequestMethod.GET)
     @ResponseBody
     public Config getConfig() {
@@ -38,6 +47,9 @@ public class ConfigController {
     public Config updateConfig(@RequestBody Config config) {
         configService.updateConfig(config);
 
+        evsMbararaScheduler.unscheduleDailyReportJob();
+        scheduleJobs();
+
         return configService.getConfig();
     }
 
@@ -45,7 +57,14 @@ public class ConfigController {
     @RequestMapping(value = "/availableVisits", method = RequestMethod.GET)
     @ResponseBody
     public List<String> getAvailableVisits() {
-        return VisitType.getDisplayValues();
+        List<String> availableValues = new ArrayList<>();
+        for (VisitType visitType : VisitType.values()) {
+            if (!VisitType.PRIME_VACCINATION_DAY.equals(visitType)
+                && !VisitType.BOOST_VACCINATION_DAY.equals(visitType)) {
+                availableValues.add(visitType.getDisplayValue());
+            }
+        }
+        return availableValues;
     }
 
     @ExceptionHandler
@@ -54,5 +73,16 @@ public class ConfigController {
     public String handleException(Exception e) {
         LOGGER.error("Error while updating configs", e);
         return e.getMessage();
+    }
+
+    private void scheduleJobs() {
+        if (configService.getConfig().getEnableReportJob()) {
+            DateTime reportStartDate = DateUtil.newDateTime(LocalDate.now(),
+                Time.parseTime(configService.getConfig().getReportCalculationStartTime(), ":"));
+            if (reportStartDate.isBeforeNow()) {
+                reportStartDate = reportStartDate.plusDays(1);
+            }
+            evsMbararaScheduler.scheduleDailyReportJob(reportStartDate);
+        }
     }
 }

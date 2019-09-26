@@ -3,12 +3,29 @@
 
     /* App Module */
     var evsMbarara = angular.module('evsMbarara', ['evsMbarara.controllers', 'evsMbarara.services',
-        'evsMbarara.directives', 'motech-dashboard', 'data-services', 'ui.directives']), subjectId;
+          'evsMbarara.directives', 'motech-dashboard', 'data-services', 'ui.directives']), subjectId,
+      callDetailRecordId, smsRecordId;
 
     $.ajax({
         url: '../mds/entities/getEntity/EVS Mbarara/Participant',
         success:  function(data) {
             subjectId = data.id;
+        },
+        async: false
+    });
+
+    $.ajax({
+        url: '../mds/entities/getEntity/IVR Module/CallDetailRecord',
+        success:  function(data) {
+            callDetailRecordId = data.id;
+        },
+        async: false
+    });
+
+    $.ajax({
+        url: '../mds/entities/getEntity/SMS Module/SmsRecord',
+        success:  function(data) {
+            smsRecordId = data.id;
         },
         async: false
     });
@@ -48,17 +65,14 @@
                 });
             } else if (tab === "reports") {
                 $routeProvider
-                    .when('/evsMbarara/{0}'.format(tab),
-                        {
-                            templateUrl: '../evs-mbarara/resources/partials/{0}.html'.format(tab)
-                        }
-                    )
-                    .when('/evsMbarara/reports/capacityReport',
-                        {
-                            templateUrl: '../evs-mbarara/resources/partials/capacityReport.html',
-                            controller: 'EvsMbarara{0}Ctrl'.format(tab.capitalize())
-                        }
-                    );
+                  .when('/evsMbarara/reports', { templateUrl: '../evs-mbarara/resources/partials/reports.html' })
+                  .when('/evsMbarara/reports/:reportType', { templateUrl: '../evs-mbarara/resources/partials/report.html', controller: 'EvsMbararaReportsCtrl' })
+                  .when('/evsMbarara/callDetailRecord', { redirectTo: '/mds/dataBrowser/' + callDetailRecordId + '/evs-mbarara' })
+                  .when('/evsMbarara/SMSLog', { redirectTo: '/mds/dataBrowser/' + smsRecordId + '/evs-mbarara' });
+            } else if (tab === "enrollment") {
+                $routeProvider
+                  .when('/evsMbarara/enrollment', {templateUrl: '../evs-mbarara/resources/partials/enrollment.html', controller: 'EvsMbararaEnrollmentCtrl'})
+                  .when('/evsMbarara/enrollmentAdvanced/:subjectId', {templateUrl: '../evs-mbarara/resources/partials/enrollmentAdvanced.html', controller: 'EvsMbararaEnrollmentAdvancedCtrl'});
             } else {
                 $routeProvider.when('/evsMbarara/{0}'.format(tab),
                     {

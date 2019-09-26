@@ -452,7 +452,6 @@
                         },
                         {
                             name: "plannedDate",
-                            formatter: rowColorFormatter,
                             index: 'dateProjected'
                         },
                         {
@@ -578,18 +577,6 @@
                     }).trigger('reloadGrid');
                 });
 
-                function rowColorFormatter(cellValue, options, rowObject) {
-                    var min = Date.parse(rowObject.earliestWindowDate);
-                    var max = Date.parse(rowObject.latestDate);
-                    var bookingDate = Date.parse(rowObject.plannedDate);
-                    if (max !== null && max !== undefined && min !== null && min !== undefined &&
-                          (max < bookingDate || min > bookingDate) && !rowObject.ignoreDateLimitation &&
-                          (rowObject.actualDate === null || rowObject.actualDate === undefined || rowObject.actualDate === "")) {
-                       rowsToColor[rowsToColor.length] = options.rowId;
-                    }
-                    return cellValue;
-                }
-
                 $(window).on('resize', function() {
                     clearTimeout(eventResize);
                     eventResize = $timeout(function() {
@@ -610,82 +597,60 @@
         };
     });
 
-    directives.directive('capacityReportGrid', function () {
-
+    directives.directive('reportGrid', function($http) {
         return {
             restrict: 'A',
-            link: function (scope, element, attrs) {
-                var elem = angular.element(element);
+            link: function(scope, element, attrs) {
+                var elem = angular.element(element), filters;
 
-                elem.jqGrid({
-                    url: '../evs-mbarara/getCapacityReports',
-                    datatype: 'json',
-                    mtype: 'GET',
-                    prmNames: {
-                        sort: 'sortColumn',
-                        order: 'sortDirection'
-                    },
-                    rowNum: 50,
-                    rowList: [10, 20, 50, 100],
-                    colNames: [
-                        scope.msg("evsMbarara.capacityReport.date"),
-                        scope.msg("evsMbarara.capacityReport.clinic"),
-                        scope.msg("evsMbarara.capacityReport.maxCapacity"),
-                        scope.msg("evsMbarara.capacityReport.availableCapacity"),
-                        scope.msg("evsMbarara.capacityReport.screeningSlotRemaining"),
-                        scope.msg("evsMbarara.capacityReport.vaccineSlotRemaining")],
-                    colModel: [
-                        {
-                            name: 'date',
-                            index: 'date'
-                        },
-                        {
-                            name: 'location',
-                            index: 'location'
-                        },
-                        {
-                            name: 'maxCapacity',
-                            sorttype: 'int'
-                        },
-                        {
-                            name: 'availableCapacity',
-                            sorttype: 'int'
-                        },
-                        {
-                            name: 'screeningSlotRemaining',
-                            sorttype: 'int'
-                        },
-                        {
-                            name: 'vaccineSlotRemaining',
-                            sorttype: 'int'
-                        }
-                    ],
-                    pager: '#pager',
-                    sortname: null,
-                    sortorder: 'asc',
-                    viewrecords: true,
-                    loadonce: true,
-                    gridview: true,
-                    gridComplete: function () {
-                        $('#capacityReportTable .ui-jqgrid-hdiv').addClass("table-lightblue");
-                        $('#capacityReportTable .ui-jqgrid-btable').addClass("table-lightblue");
-                    },
-                    postData: {
-                        startDate: function() {
-                            return handleUndefined(scope.selectedFilter.startDate);
-                        },
-                        endDate: function() {
-                            return handleUndefined(scope.selectedFilter.endDate);
-                        },
-                        dateFilter: function() {
-                            return handleUndefined(scope.selectedFilter.dateFilter);
-                        }
+                $.ajax({
+                    type: "GET",
+                    url: "../evs-mbarara/getReportModel/" + scope.reportType,
+                    dataType: "json",
+                    success: function (result) {
+                        var jsonColNames = scope.buildColumnNames(result.colNames);
+                        var jsonColModel = scope.buildColumnModel(result.colModel);
+                        elem.jqGrid({
+                            url: "../evs-mbarara/getReport/" + scope.reportType,
+                            headers: {
+                                'Accept': 'application/x-www-form-urlencoded',
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            datatype: 'json',
+                            mtype: "POST",
+                            postData: {
+                                fields: JSON.stringify(scope.lookupBy)
+                            },
+                            jsonReader:{
+                                repeatitems: false
+                            },
+                            prmNames: {
+                                sort: 'sortColumn',
+                                order: 'sortDirection'
+                            },
+                            colNames: jsonColNames,
+                            colModel: jsonColModel,
+                            pager: '#' + attrs.reportGrid,
+                            rowNum: 50,
+                            rowList: [10, 20, 50, 100],
+                            viewrecords: true,
+                            loadonce: false,
+                            resizeStop: function() {
+                                $('.ui-jqgrid-htable').width('100%');
+                                $('.ui-jqgrid-btable').width('100%');
+                                elem.jqGrid('setGridWidth', '100%');
+                            },
+                            gridComplete: function () {
+                                $('.ui-jqgrid-htable').width('100%');
+                                $('.ui-jqgrid-btable').width('100%');
+                                elem.jqGrid('setGridWidth', '100%');
+                            }
+                        });
                     }
                 });
 
                 scope.$watch("lookupRefresh", function () {
                     $('#' + attrs.id).jqGrid('setGridParam', {
-                        datatype: 'json',
                         page: 1,
                         postData: {
                             fields: JSON.stringify(scope.lookupBy),
@@ -843,24 +808,207 @@
         };
     });
 
-    directives.directive('numbersOnly', function () {
-        return {
-            require: 'ngModel',
-            link: function (scope, element, attr, ngModelCtrl) {
-                function fromUser(text) {
-                    if (text) {
-                        var transformedInput = text.replace(/[^0-9-]/g, '');
-                        if (transformedInput !== text) {
-                            ngModelCtrl.$setViewValue(transformedInput);
-                            ngModelCtrl.$render();
-                        }
-                        return transformedInput;
-                    }
-                    return undefined;
-                }
-                ngModelCtrl.$parsers.push(fromUser);
+  directives.directive('enrollmentGrid', function($http, $compile) {
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        var elem = angular.element(element), filters;
+
+        elem.jqGrid({
+          url: '../evs-mbarara/getEnrollments',
+          headers: {
+            'Accept': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          datatype: 'json',
+          mtype: "POST",
+          postData: {
+            fields: JSON.stringify(scope.lookupBy)
+          },
+          jsonReader:{
+            repeatitems: false
+          },
+          prmNames: {
+            sort: 'sortColumn',
+            order: 'sortDirection'
+          },
+          colNames: ['rowId', scope.msg('evsMbarara.enrollment.subjectId'),
+              scope.msg('evsMbarara.enrollment.status'), scope.msg('evsMbarara.enrollment.action')],
+          colModel: [{
+            name: 'rowId',
+            index: 'rowId',
+            hidden: true,
+            key: true
+          }, {
+            name: 'subject',
+            index: 'subject.subjectId',
+            classes: 'pointer',
+            align: 'center',
+            formatter: function(cellValue, options, rowObject) {
+              if (!cellValue){
+                return '';
+              }
+              return cellValue.subjectId;
             }
-        };
-    });
+          }, {
+            name: 'status',
+            index: 'status',
+            classes: 'pointer',
+            align: 'center'
+          }, {
+            name: 'action',
+            jsonmap: 'status',
+            align: 'center',
+            sortable: false,
+            formatter: function(cellValue, options, rowObject) {
+              if (rowObject.status === 'Enrolled') {
+                return "<button id='unenroll" + options.rowId + "' ng-click='unenroll(\"" + rowObject.subject.subjectId + "\")'" +
+                  " type='button' class='btn btn-danger compileBtn' ng-disabled='enrollInProgress'>" +
+                  scope.msg('evsMbarara.enrollment.btn.unenroll') + "</button>";
+              } else if (rowObject.status === 'Unenrolled' || rowObject.status === 'Initial') {
+                return "<button id='enroll" + options.rowId + "' ng-click='enroll(\"" + rowObject.subject.subjectId + "\")'" +
+                  " type='button' class='btn btn-success compileBtn' ng-disabled='enrollInProgress'>" +
+                  scope.msg('evsMbarara.enrollment.btn.enroll') + "</button>";
+              }
+              return '';
+            }
+          }],
+          onCellSelect: function (id, iCol, cellContent, e) {
+            if (iCol !== 5) {
+              var rowValue = elem.jqGrid('getRowData', id);
+              scope.goToAdvanced(rowValue.subject);
+            }
+          },
+          pager: '#' + attrs.enrollmentGrid,
+          rowNum: 50,
+          rowList: [10, 20, 50, 100],
+          viewrecords: true,
+          loadonce: false,
+          resizeStop: function() {
+            $('.ui-jqgrid-htable').width('100%');
+            $('.ui-jqgrid-btable').width('100%');
+            elem.jqGrid('setGridWidth', '100%');
+          },
+          gridComplete: function () {
+            $('.ui-jqgrid-htable').width('100%');
+            $('.ui-jqgrid-btable').width('100%');
+            elem.jqGrid('setGridWidth', '100%');
+            $compile($('.compileBtn'))(scope);
+          }
+        });
+
+        scope.$watch("lookupRefresh", function () {
+          $('#' + attrs.id).jqGrid('setGridParam', {
+            page: 1,
+            postData: {
+              fields: JSON.stringify(scope.lookupBy),
+              lookup: (scope.selectedLookup) ? scope.selectedLookup.lookupName : ""
+            }
+          }).trigger('reloadGrid');
+        });
+
+        scope.$watch("gridRefresh", function () {
+          $('#' + attrs.id).jqGrid('setGridParam', {
+            postData: {
+            }
+          }).trigger('reloadGrid');
+        });
+      }
+    };
+  });
+
+  directives.directive('enrollmentAdvancedGrid', function($http, $compile) {
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        var elem = angular.element(element), filters;
+
+        elem.jqGrid({
+          url: '../evs-mbarara/getEnrollmentAdvanced/' + scope.selectedSubjectId,
+          headers: {
+            'Accept': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          datatype: 'json',
+          mtype: "POST",
+          postData: {
+          },
+          jsonReader:{
+            repeatitems: false
+          },
+          prmNames: {
+            sort: 'sortColumn',
+            order: 'sortDirection'
+          },
+          colNames: ['rowId', scope.msg('evsMbarara.enrollment.subjectId'), scope.msg('evsMbarara.enrollment.campaignName'),
+            scope.msg('evsMbarara.enrollment.date'), scope.msg('evsMbarara.enrollment.status'), scope.msg('evsMbarara.enrollment.action')],
+          colModel: [{
+            name: 'rowId',
+            index: 'rowId',
+            hidden: true,
+            key: true
+          }, {
+            name: 'externalId',
+            index: 'externalId',
+            align: 'center'
+          }, {
+            name: 'campaignName',
+            index: 'campaignName',
+            align: 'center'
+          }, {
+            name: 'referenceDate',
+            index: 'referenceDate',
+            classes: 'pointer',
+            align: 'center'
+          }, {
+            name: 'status',
+            index: 'status',
+            align: 'center'
+          }, {
+            name: 'action',
+            jsonmap: 'status',
+            align: 'center',
+            sortable: false,
+            formatter: function(cellValue, options, rowObject) {
+              if (rowObject.status === 'Enrolled') {
+                return "<button ng-click='unenroll(\"" + rowObject.campaignName + "\")'" +
+                  " type='button' class='btn btn-danger compileBtn' ng-disabled='enrollInProgress'>" +
+                  scope.msg('evsMbarara.enrollment.btn.unenroll') + "</button>";
+              } else if (rowObject.status === 'Unenrolled' || rowObject.status === 'Initial') {
+                return "<button ng-click='enroll(\"" + rowObject.campaignName + "\")'" +
+                  " type='button' class='btn btn-success compileBtn' ng-disabled='enrollInProgress'>" +
+                  scope.msg('evsMbarara.enrollment.btn.enroll') + "</button>";
+              }
+              return '';
+            }
+          }],
+          viewrecords: true,
+          cellEdit: true,
+          cellsubmit : 'clientArray',
+          rowNum: 100,
+          loadonce: false,
+          resizeStop: function() {
+            $('.ui-jqgrid-htable').width('100%');
+            $('.ui-jqgrid-btable').width('100%');
+            elem.jqGrid('setGridWidth', '100%');
+          },
+          gridComplete: function () {
+            $('.ui-jqgrid-htable').width('100%');
+            $('.ui-jqgrid-btable').width('100%');
+            elem.jqGrid('setGridWidth', '100%');
+            $compile($('.compileBtn'))(scope);
+          }
+        });
+
+        scope.$watch("lookupRefresh", function () {
+          $('#' + attrs.id).jqGrid('setGridParam', {
+            page: 1,
+            postData: {
+            }
+          }).trigger('reloadGrid');
+        });
+      }
+    };
+  });
 
 }());

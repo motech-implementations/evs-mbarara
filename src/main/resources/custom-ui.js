@@ -14,13 +14,26 @@ if(!$('#inputMaskJs').length) {
     $("head").append(s);
 }
 
-$scope.showBackToEntityListButton = false;
 $scope.showAddInstanceButton = false;
 $scope.showDeleteInstanceButton = false;
 $scope.showLookupButton = true;
 
 if ($scope.selectedEntity.name === "Participant") {
+    $scope.showBackToEntityListButton = false;
+} else {
+    $scope.showViewTrashButton = false;
+    $scope.showImportButton = false;
+    $scope.backToEntityList = function() {
+        $scope.dataRetrievalError = false;
+        $scope.selectedEntity = undefined;
+        window.location.replace('#/evsMbarara/reports');
+    };
+}
+
+if ($scope.selectedEntity.name === "Participant") {
     $rootScope.selectedTab = "subjects";
+} else {
+    $rootScope.selectedTab = "reports";
 }
 
 var importCsvModal = '../evs-mbarara/resources/partials/modals/import-csv.html';
@@ -239,6 +252,8 @@ $scope.retrieveAndSetEntityData = function(entityUrl, callback) {
                         .success(function(data) {
                             $scope.entityAdvanced.indexes = data;
                         });
+                } else {
+                    $(".clearfix").children(".btn-primary").html("<i class='fa fa-lg fa-level-up'></i>&nbsp;" + $scope.msg('evsMbarara.reports.btn.backToList'));
                 }
 
                 var filterableFields = $scope.entityAdvanced.browsing.filterableFields,
