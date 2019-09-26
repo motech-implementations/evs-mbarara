@@ -72,7 +72,10 @@
         <osgi:reference-listener ref="jobImporter"/>
     </osgi:reference>
 
-    <osgi:reference id="messageCampaignService" interface="org.motechproject.messagecampaign.service.MessageCampaignService" />
+    <osgi:reference id="messageCampaignService"
+      interface="org.motechproject.messagecampaign.service.MessageCampaignService">
+        <osgi:reference-listener ref="messageCampaignImporter"/>
+    </osgi:reference>
 
     <osgi:reference id="outboundCallService" interface="org.motechproject.ivr.service.OutboundCallService"/>
 </beans>
