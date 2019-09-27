@@ -493,7 +493,7 @@
                         rowsToColor = [];
                     },
                     onCellSelect: function(rowId, iCol, cellContent, e) {
-                        if (iCol !== 7) {
+                        if (iCol !== 4) {
                             var rowData = elem.getRowData(rowId),
                                 extraRowData = gridDataExtension[rowId];
 
