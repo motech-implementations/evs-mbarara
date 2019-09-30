@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.LocalDate;
@@ -91,29 +92,26 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
     }
 
     private Visit updateVisitDetailsWithDto(Visit visit, VisitRescheduleDto dto) {
+        boolean rollbackCompleted = dto.getActualDate() == null && visit.getDate() != null;
+
         visit.setIgnoreDateLimitation(dto.getIgnoreDateLimitation());
         visit.setDateProjected(dto.getPlannedDate());
+        visit.setDate(dto.getActualDate());
 
-        if (VisitType.BOOST_VACCINATION_DAY.equals(dto.getVisitType()) && dto.getActualDate() != null) {
-            Subject subject = visit.getSubject();
+        Subject subject = visit.getSubject();
 
-            if (!dto.getActualDate().equals(subject.getBoosterVaccinationDate())) {
-                visit.setDate(dto.getActualDate());
-                subject.setBoosterVaccinationDate(dto.getActualDate());
+        if (VisitType.BOOST_VACCINATION_DAY.equals(dto.getVisitType())
+            && !Objects.equals(dto.getActualDate(), subject.getBoosterVaccinationDate())) {
+          subject.setBoosterVaccinationDate(dto.getActualDate());
 
-                visitDataService.update(visit);
-                subjectService.update(subject);
+          visitDataService.update(visit);
+          subjectService.update(subject);
 
-                return visit;
-            }
+          return visit;
         } else if (dto.getActualDate() != null) {
-            visit.setDate(dto.getActualDate());
-
             evsEnrollmentService.completeCampaign(visit);
         } else if (dto.getPlannedDate() != null) {
-            visit.setDateProjected(dto.getPlannedDate());
-
-            evsEnrollmentService.createEnrollmentOrReenrollCampaign(visit);
+            evsEnrollmentService.createEnrollmentOrReenrollCampaign(visit, rollbackCompleted);
         }
 
         return visitDataService.update(visit);

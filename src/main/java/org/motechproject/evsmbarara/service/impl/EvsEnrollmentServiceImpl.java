@@ -124,7 +124,7 @@ public class EvsEnrollmentServiceImpl implements EvsEnrollmentService {
     }
 
     @Override
-    public void createEnrollmentOrReenrollCampaign(Visit visit) {
+    public void createEnrollmentOrReenrollCampaign(Visit visit, boolean rollbackCompleted) {
         Subject subject = visit.getSubject();
         SubjectEnrollments subjectEnrollments = subjectEnrollmentsDataService.findBySubjectId(subject.getSubjectId());
 
@@ -140,22 +140,27 @@ public class EvsEnrollmentServiceImpl implements EvsEnrollmentService {
 
         Enrollment enrollment = subjectEnrollments.findEnrolmentByCampaignName(campaignName);
 
-        if (enrollment == null) {
-            enrollment = new Enrollment(subject.getSubjectId(), campaignName, referenceDate, EnrollmentStatus.ENROLLED);
-            subjectEnrollments.addEnrolment(enrollment);
+        try {
+            if (enrollment == null) {
+                enrollment = new Enrollment(subject.getSubjectId(), campaignName, referenceDate, EnrollmentStatus.ENROLLED);
+                subjectEnrollments.addEnrolment(enrollment);
 
-            try {
                 scheduleJobsForEnrollment(enrollment, false);
-            } catch (EvsEnrollmentException e) {
-                LOGGER.debug(e.getMessage(), e);
-            }
-        } else if (EnrollmentStatus.ENROLLED.equals(enrollment.getStatus())) {
-            reenrollSubjectWithNewDate(subject.getSubjectId(), enrollment.getCampaignName(), referenceDate);
-        } else if (!EnrollmentStatus.COMPLETED.equals(enrollment.getStatus())) {
-            updateReferenceDateIfUnenrolled(enrollment, referenceDate);
-        }
+            } else if (EnrollmentStatus.ENROLLED.equals(enrollment.getStatus())) {
+                reenrollSubjectWithNewDate(subject.getSubjectId(), enrollment.getCampaignName(), referenceDate);
+            } else if (!EnrollmentStatus.COMPLETED.equals(enrollment.getStatus())) {
+                updateReferenceDateIfUnenrolled(enrollment, referenceDate);
+            } else if (rollbackCompleted && EnrollmentStatus.COMPLETED.equals(enrollment.getStatus())) {
+                enrollment.setStatus(EnrollmentStatus.ENROLLED);
+                enrollment.setReferenceDate(referenceDate);
 
-        updateSubjectEnrollments(subjectEnrollments);
+                scheduleJobsForEnrollment(enrollment, false);
+            }
+
+            updateSubjectEnrollments(subjectEnrollments);
+        } catch (EvsEnrollmentException e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
     }
 
     @Override
