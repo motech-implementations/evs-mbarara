@@ -201,7 +201,7 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
             }
         }
 
-        if (offset.getEarliestDateOffset() != null) {
+        if (offset.getLatestDateOffset() != null) {
             maxDate = vaccinationDate.plusDays(offset.getLatestDateOffset());
         }
 

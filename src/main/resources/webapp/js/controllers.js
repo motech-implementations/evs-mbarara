@@ -558,9 +558,15 @@
 
         $scope.setDatePicker = function () {
             var plannedDate = $scope.parseDate($scope.form.dto.plannedDate);
+            var minDate = $scope.form.dto.minDate;
+
+            if (plannedDate && minDate && plannedDate < minDate) {
+                minDate = plannedDate;
+            }
+
             var plannedDateInput = $('#plannedDateInput');
             plannedDateInput.datepicker("setDate", plannedDate);
-            plannedDateInput.datepicker('option', 'minDate', $scope.form.dto.minDate);
+            plannedDateInput.datepicker('option', 'minDate', minDate);
             plannedDateInput.datepicker('option', 'maxDate', $scope.form.dto.maxDate);
 
             var actualDateInput = $('#actualDateInput');
@@ -661,20 +667,18 @@
 
         $scope.$watch('form.dto.ignoreDateLimitation', function (value) {
             if ($scope.form && $scope.form.dto) {
+                var plannedDate = $scope.parseDate($scope.form.dto.plannedDate);
+                var minDate = $scope.earliestDateToReturn;
+
                 if (!value) {
-                    $scope.form.dto.minDate = $scope.earliestDateToReturn;
                     $scope.form.dto.maxDate = $scope.latestDateToReturn;
-                } else {
-                    var plannedDate = $scope.parseDate($scope.form.dto.plannedDate);
-                    var currentDate = new Date();
-                    currentDate.setHours(0, 0, 0, 0);
-                    if (plannedDate < currentDate) {
-                        $scope.form.dto.minDate = plannedDate;
-                    } else {
-                        $scope.form.dto.minDate = currentDate;
-                    }
-                    $scope.form.dto.maxDate = null;
                 }
+
+                if (plannedDate && minDate && plannedDate < minDate) {
+                    minDate = plannedDate;
+                }
+
+                $scope.form.dto.minDate = minDate;
             }
         });
 

@@ -503,11 +503,7 @@
                                 var message = "evsMbarara.visitReschedule.participantVisitScheduleOffsetMissing";
 
                                 if (extraRowData.notVaccinated) {
-                                    if (extraRowData.boosterRelated) {
-                                        message = "evsMbarara.visitReschedule.participantNotBoostVaccinated";
-                                    } else {
-                                        message = "evsMbarara.visitReschedule.participantNotPrimeVaccinated";
-                                    }
+                                    message = "evsMbarara.visitReschedule.participantNotPrimeVaccinated";
                                 }
 
                                 scope.showRescheduleModal(scope.msg('evsMbarara.visitReschedule.cannotReschedule'), scope.msg(message));
@@ -531,23 +527,21 @@
                                 scope.form.dto.minActualDate = null;
                                 scope.form.dto.maxActualDate = new Date();
 
-                                if (!scope.form.dto.ignoreDateLimitation) {
-                                    var currentDate = new Date();
-                                    currentDate.setHours(0,0,0,0);
-                                    var plannedDate = scope.parseDate(scope.form.dto.plannedDate);
+                                var plannedDate = scope.parseDate(scope.form.dto.plannedDate);
+                                var minDate = scope.earliestDateToReturn;
 
-                                    if (scope.earliestDateToReturn < currentDate && plannedDate >= currentDate) {
-                                        scope.form.dto.minDate = currentDate;
-                                    } else if (plannedDate < currentDate) {
-                                        scope.form.dto.minDate = plannedDate;
-                                    } else {
-                                        scope.form.dto.minDate = scope.earliestDateToReturn;
-                                    }
+                                if (!scope.form.dto.ignoreDateLimitation) {
                                     scope.form.dto.maxDate = scope.latestDateToReturn;
                                 } else {
-                                    scope.form.dto.minDate = new Date();
                                     scope.form.dto.maxDate = null;
                                 }
+
+                                if (plannedDate && minDate && plannedDate < minDate) {
+                                    minDate = plannedDate;
+                                }
+
+                                scope.form.dto.minDate = minDate;
+
                                 scope.showRescheduleModal(scope.msg('evsMbarara.visitReschedule.update'), scope.msg('evsMbarara.visitReschedule.plannedDateUpdateSuccessful'));
                             }
                         } else {
