@@ -109,7 +109,7 @@ public class LookupServiceIT extends BasePaxIT {
     private void resetTestFields() {
         Subject firstSubject = createSubject("1000000161", "Michal", "729402018364", Language.English);
 
-        Subject secondSubject = createSubject("1000000162", "Rafal", "44443333222", Language.Susu);
+        Subject secondSubject = createSubject("1000000162", "Rafal", "44443333222", Language.Runyankole);
 
         firstSubject.setPrimerVaccinationDate(new LocalDate(2014, 10, 16));
         firstSubject.setBoosterVaccinationDate(new LocalDate(2014, 10, 16));
