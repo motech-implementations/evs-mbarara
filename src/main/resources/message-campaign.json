@@ -14,7 +14,7 @@
         ],
         "messageKey": "welcome-message",
         "timeOffset": "1 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       }
     ]
   },
@@ -33,7 +33,7 @@
         ],
         "messageKey": "clinic-visit-reminder-today",
         "timeOffset": "0 Day",
-        "startTime": "4:30"
+        "startTime": "7:30"
       }
     ]
   },
@@ -52,7 +52,7 @@
         ],
         "messageKey": "clinic-visit-reminder-1-day",
         "timeOffset": "-1 Day",
-        "startTime": "4:30"
+        "startTime": "7:30"
       },
       {
         "name": "Clinic Visit Reminder: today",
@@ -65,7 +65,7 @@
         ],
         "messageKey": "clinic-visit-reminder-today",
         "timeOffset": "0 Day",
-        "startTime": "4:30"
+        "startTime": "7:30"
       }
     ]
   },
@@ -84,7 +84,7 @@
         ],
         "messageKey": "phone-appt-reminder-1-day",
         "timeOffset": "-1 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Phone Appt Reminder: today",
@@ -97,7 +97,7 @@
         ],
         "messageKey": "phone-appt-reminder-today",
         "timeOffset": "0 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       }
     ]
   },
@@ -116,7 +116,7 @@
         ],
         "messageKey": "phone-appt-reminder-1-day",
         "timeOffset": "-1 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Phone Appt Reminder: today",
@@ -129,7 +129,7 @@
         ],
         "messageKey": "phone-appt-reminder-today",
         "timeOffset": "0 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       }
     ]
   },
@@ -148,7 +148,7 @@
         ],
         "messageKey": "booster-reminder-1-week",
         "timeOffset": "-7 Days",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Booster Reminder: 1 day",
@@ -161,7 +161,7 @@
         ],
         "messageKey": "booster-reminder-1-day",
         "timeOffset": "-1 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Booster Reminder: today",
@@ -174,7 +174,7 @@
         ],
         "messageKey": "booster-reminder-today",
         "timeOffset": "0 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Missed Dose Reminder: 1 day",
@@ -187,7 +187,7 @@
         ],
         "messageKey": "missed-dose-reminder-1-day",
         "timeOffset": "1 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       }
     ]
   },
@@ -206,7 +206,7 @@
         ],
         "messageKey": "clinic-visit-reminder-today-booster",
         "timeOffset": "0 Day",
-        "startTime": "4:30"
+        "startTime": "7:30"
       }
     ]
   },
@@ -225,7 +225,7 @@
         ],
         "messageKey": "clinic-visit-reminder-1-day-booster",
         "timeOffset": "-1 Day",
-        "startTime": "4:30"
+        "startTime": "7:30"
       },
       {
         "name": "Clinic Visit Reminder: today",
@@ -238,7 +238,7 @@
         ],
         "messageKey": "clinic-visit-reminder-today-booster",
         "timeOffset": "0 Day",
-        "startTime": "4:30"
+        "startTime": "7:30"
       }
     ]
   },
@@ -257,7 +257,7 @@
         ],
         "messageKey": "phone-appt-reminder-1-day",
         "timeOffset": "-1 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Phone Appt Reminder: today",
@@ -270,7 +270,7 @@
         ],
         "messageKey": "phone-appt-reminder-today",
         "timeOffset": "0 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       }
     ]
   },
@@ -289,7 +289,7 @@
         ],
         "messageKey": "physical-visit-reminder-1-week",
         "timeOffset": "-7 Days",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Physical Visit Reminder: 1 day",
@@ -302,7 +302,7 @@
         ],
         "messageKey": "physical-visit-reminder-1-day",
         "timeOffset": "-1 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Physical Visit Reminder: today",
@@ -315,7 +315,7 @@
         ],
         "messageKey": "physical-visit-reminder-today",
         "timeOffset": "0 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Physical Visit Missed appointment: 3 days",
@@ -328,7 +328,7 @@
         ],
         "messageKey": "physical-visit-missed-appointment-3-days",
         "timeOffset": "3 Days",
-        "startTime": "4:00"
+        "startTime": "7:00"
       }
     ]
   },
@@ -347,7 +347,7 @@
         ],
         "messageKey": "phone-appt-reminder-1-day",
         "timeOffset": "-1 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Phone Appt Reminder: today",
@@ -360,7 +360,7 @@
         ],
         "messageKey": "phone-appt-reminder-today",
         "timeOffset": "0 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       }
     ]
   },
@@ -379,7 +379,7 @@
         ],
         "messageKey": "phone-appt-reminder-1-day",
         "timeOffset": "-1 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Phone Appt Reminder: today",
@@ -392,7 +392,7 @@
         ],
         "messageKey": "phone-appt-reminder-today",
         "timeOffset": "0 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       }
     ]
   },
@@ -411,7 +411,7 @@
         ],
         "messageKey": "physical-visit-reminder-1-week",
         "timeOffset": "-7 Days",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Physical Visit Reminder: 1 day",
@@ -424,7 +424,7 @@
         ],
         "messageKey": "physical-visit-reminder-1-day",
         "timeOffset": "-1 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Physical Visit Reminder: today",
@@ -437,7 +437,7 @@
         ],
         "messageKey": "physical-visit-reminder-today",
         "timeOffset": "0 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Physical Visit Missed appointment: 3 days",
@@ -450,7 +450,7 @@
         ],
         "messageKey": "physical-visit-missed-appointment-3-days",
         "timeOffset": "3 Days",
-        "startTime": "4:00"
+        "startTime": "7:00"
       }
     ]
   },
@@ -469,7 +469,7 @@
         ],
         "messageKey": "phone-appt-reminder-1-day",
         "timeOffset": "-1 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       },
       {
         "name": "Phone Appt Reminder: today",
@@ -482,7 +482,7 @@
         ],
         "messageKey": "phone-appt-reminder-today",
         "timeOffset": "0 Day",
-        "startTime": "4:00"
+        "startTime": "7:00"
       }
     ]
   }
