@@ -62,11 +62,15 @@ public final class EvsMbararaConstants {
     public static final String UNSCHEDULED_VISITS_TAB_PERMISSION = "evsMbararaUnscheduledVisitsTab";
     public static final String REPORTS_TAB_PERMISSION = "evsMbararaReportsTab";
     public static final String SUBJECTS_TAB_PERMISSION = "evsMbararaSubjectsTab";
+    public static final String ENROLLMENTS_TAB_PERMISSION = "umurinziEnrollmentsTab";
+    public static final String MANAGE_ENROLLMENTS_PERMISSION = "manageEnrollments";
 
     public static final String HAS_VISIT_RESCHEDULE_TAB_ROLE = "hasRole('" + VISIT_RESCHEDULE_TAB_PERMISSION + "')";
     public static final String HAS_UNSCHEDULED_VISITS_TAB_ROLE = "hasRole('" + UNSCHEDULED_VISITS_TAB_PERMISSION + "')";
     public static final String HAS_REPORTS_TAB_ROLE = "hasRole('" + REPORTS_TAB_PERMISSION + "')";
     public static final String HAS_SUBJECTS_TAB_ROLE = "hasRole('" + SUBJECTS_TAB_PERMISSION + "')";
+    public static final String HAS_ENROLLMENTS_TAB_ROLE = "hasRole('" + ENROLLMENTS_TAB_PERMISSION + "')";
+    public static final String HAS_MANAGE_ENROLLMENTS_ROLE = "hasRole('" + MANAGE_ENROLLMENTS_PERMISSION + "')";
 
     public static final String UNSCHEDULED_VISITS_NAME = "Unscheduled_Visits";
     public static final String VISIT_RESCHEDULE_NAME = "VisitReschedule";

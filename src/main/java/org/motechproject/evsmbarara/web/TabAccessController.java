@@ -1,5 +1,6 @@
 package org.motechproject.evsmbarara.web;
 
+import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.ENROLLMENTS_TAB_PERMISSION;
 import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.REPORTS_TAB_PERMISSION;
 import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.SUBJECTS_TAB_PERMISSION;
 import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.UNSCHEDULED_VISITS_TAB_PERMISSION;
@@ -30,6 +31,9 @@ public class TabAccessController {
 
         if (auth.getAuthorities().contains(new SimpleGrantedAuthority(VISIT_RESCHEDULE_TAB_PERMISSION))) {
             availableTabs.add("reschedule");
+        }
+
+        if (auth.getAuthorities().contains(new SimpleGrantedAuthority(ENROLLMENTS_TAB_PERMISSION))) {
             availableTabs.add("enrollment");
         }
 

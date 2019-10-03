@@ -5,6 +5,7 @@ import static org.motechproject.evsmbarara.constants.EvsMbararaConstants.AVAILAB
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import org.motechproject.evsmbarara.constants.EvsMbararaConstants;
 import org.motechproject.evsmbarara.domain.Enrollment;
 import org.motechproject.evsmbarara.domain.SubjectEnrollments;
 import org.motechproject.evsmbarara.exception.EvsEnrollmentException;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
+@PreAuthorize(EvsMbararaConstants.HAS_ENROLLMENTS_TAB_ROLE)
 public class EvsEnrollmentController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EvsEnrollmentController.class);
@@ -45,7 +47,6 @@ public class EvsEnrollmentController {
     @Autowired
     private LookupService lookupService;
 
-    @PreAuthorize("hasRole('manageEvsMbarara')")
     @RequestMapping(value = "/getEnrollments", method = RequestMethod.POST)
     @ResponseBody
     public Records<?> getEnrollments(GridSettings settings) {
@@ -64,7 +65,6 @@ public class EvsEnrollmentController {
         }
     }
 
-    @PreAuthorize("hasRole('manageEvsMbarara')")
     @RequestMapping(value = "/getLookupsForEnrollments", method = RequestMethod.GET)
     @ResponseBody
     public List<LookupDto> getLookupsForEnrollments() {
@@ -86,14 +86,14 @@ public class EvsEnrollmentController {
         return ret;
     }
 
-    @PreAuthorize("hasRole('manageEnrollments')")
+    @PreAuthorize(EvsMbararaConstants.HAS_MANAGE_ENROLLMENTS_ROLE)
     @RequestMapping(value = "/checkAdvancedPermissions", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> checkAdvancedPermissions() {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('manageEnrollments')")
+    @PreAuthorize(EvsMbararaConstants.HAS_MANAGE_ENROLLMENTS_ROLE)
     @RequestMapping(value = "/getEnrollmentAdvanced/{subjectId}", method = RequestMethod.POST)
     @ResponseBody
     public Records<?> getEnrollmentAdvanced(@PathVariable String subjectId, GridSettings settings) {
@@ -115,7 +115,6 @@ public class EvsEnrollmentController {
         return new Records<>(settings.getPage(), rowCount, (int) recordCount, enrollments);
     }
 
-    @PreAuthorize("hasRole('manageEvsMbarara')")
     @RequestMapping(value = "/enrollSubject", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> enrollSubject(@RequestBody String subjectId) {
@@ -133,7 +132,6 @@ public class EvsEnrollmentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('manageEvsMbarara')")
     @RequestMapping(value = "/unenrollSubject", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> unenrollSubject(@RequestBody String subjectId) {
@@ -151,7 +149,7 @@ public class EvsEnrollmentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('manageEnrollments')")
+    @PreAuthorize(EvsMbararaConstants.HAS_MANAGE_ENROLLMENTS_ROLE)
     @RequestMapping(value = "/enrollCampaign/{subjectId}/{campaignName}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> enrollCampaign(@PathVariable String subjectId, @PathVariable String campaignName) {
@@ -174,7 +172,7 @@ public class EvsEnrollmentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('manageEnrollments')")
+    @PreAuthorize(EvsMbararaConstants.HAS_MANAGE_ENROLLMENTS_ROLE)
     @RequestMapping(value = "/unenrollCampaign/{subjectId}/{campaignName}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> unenrollCampaign(@PathVariable String subjectId, @PathVariable String campaignName) {
