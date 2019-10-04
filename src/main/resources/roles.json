@@ -11,10 +11,11 @@
       "manageEvsMbarara",
       "evsMbararaSubjectsTab",
       "evsMbararaVisitRescheduleBookingTab",
-      "umurinziEnrollmentsTab",
-      "manageEnrollments",
+      "evsMbararaEnrollmentsTab",
+      "evsMbararaManageEnrollments",
       "evsMbararaUnscheduledVisitsTab",
       "evsMbararaReportsTab",
+      "evsMbararaImportSubjects",
       "viewUI"
     ]
   },
@@ -24,8 +25,8 @@
       "manageEvsMbarara",
       "evsMbararaSubjectsTab",
       "evsMbararaVisitRescheduleBookingTab",
-      "umurinziEnrollmentsTab",
-      "manageEnrollments",
+      "evsMbararaEnrollmentsTab",
+      "evsMbararaManageEnrollments",
       "evsMbararaUnscheduledVisitsTab",
       "evsMbararaReportsTab",
       "viewUI"

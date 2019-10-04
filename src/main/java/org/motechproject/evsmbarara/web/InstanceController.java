@@ -74,7 +74,7 @@ public class InstanceController {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @PreAuthorize(EvsMbararaConstants.HAS_SUBJECTS_TAB_ROLE)
+    @PreAuthorize(EvsMbararaConstants.HAS_IMPORT_SUBJECTS_ROLE)
     @RequestMapping(value = "/instances/{entityId}/Participantcsvimport", method = RequestMethod.POST)
     @ResponseBody
     public long subjectImportCsv(@PathVariable long entityId, @RequestParam(required = true) MultipartFile csvFile) {
