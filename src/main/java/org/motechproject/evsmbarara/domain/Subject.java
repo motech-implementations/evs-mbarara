@@ -5,7 +5,6 @@ import java.util.List;
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.Unique;
-import javax.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -46,7 +45,6 @@ public class Subject {
 
     @UIDisplayable(position = 1)
     @Column(length = 20)
-    @Pattern(regexp = "^[0-9\\s]*$")
     @Field
     @Getter
     private String phoneNumber;
