@@ -105,7 +105,7 @@ public class ReportServiceImpl implements ReportService {
 
     private void createIvrAndSmsStatisticReport(CallDetailRecord initialRecord) { //NO CHECKSTYLE CyclomaticComplexity
         DateTimeFormatter motechTimestampFormatter = DateTimeFormat.forPattern(EvsMbararaConstants.IVR_CALL_DETAIL_RECORD_TIME_FORMAT);
-        DateTimeFormatter votoTimestampFormatter = DateTimeFormat.forPattern(EvsMbararaConstants.VOTO_TIMESTAMP_FORMAT);
+        DateTimeFormatter votoTimestampFormatter = DateTimeFormat.forPattern(EvsMbararaConstants.VOTO_TIMESTAMP_FORMAT).withZoneUTC();
 
         String providerCallId = initialRecord.getProviderCallId();
         Map<String, String> providerExtraData = initialRecord.getProviderExtraData();
