@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -210,7 +211,7 @@ public class ReportServiceImpl implements ReportService {
                         providerCallId, subjectId);
                 }
 
-                smsReceivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter);
+                smsReceivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter).toDateTime(DateTimeZone.getDefault());
             }
         } else if (sms) {
           LOGGER.warn("SMS is sent but not yet received for Call Detail Record with Provider Call Id: {} for Providers with Ids {}", providerCallId, subjectId);
@@ -229,7 +230,7 @@ public class ReportServiceImpl implements ReportService {
                         providerCallId, subjectId);
                 }
 
-                receivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter);
+                receivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter).toDateTime(DateTimeZone.getDefault());
 
                 if (StringUtils.isNotBlank(callRecord.getCallDuration())) {
                     timeListenedTo = Double.parseDouble(callRecord.getCallDuration());
