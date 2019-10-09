@@ -45,33 +45,43 @@ public class SubjectServiceImpl implements SubjectService {
         return subjectDataService.update(subject);
     }
 
-    //CHECKSTYLE:OFF: checkstyle:cyclomaticcomplexity
-    @SuppressWarnings("checkstyle:CyclomaticComplexity")
+    @Override
+    public Subject update(Subject subject, Subject oldSubject) {
+        subjectDataChanged(subject, oldSubject, subject);
+
+        return subjectDataService.update(subject);
+    }
+
     @Override
     public void subjectDataChanged(Subject subject) {
         Subject oldSubject = findSubjectBySubjectId(subject.getSubjectId());
+        subjectDataChanged(subject, oldSubject, oldSubject);
+    }
 
+    //CHECKSTYLE:OFF: checkstyle:cyclomaticcomplexity
+    @SuppressWarnings("checkstyle:CyclomaticComplexity")
+    private void subjectDataChanged(Subject newSubject, Subject oldSubject, Subject subject) {
         if (oldSubject != null) {
             if ((oldSubject.getSubStudy() == null || !oldSubject.getSubStudy())
-                && subject.getSubStudy() != null && subject.getSubStudy()) {
-                visitService.createSubStudyVisits(oldSubject);
-            } else if ((subject.getSubStudy() == null || !subject.getSubStudy())
+                && newSubject.getSubStudy() != null && newSubject.getSubStudy()) {
+                visitService.createSubStudyVisits(subject);
+            } else if ((newSubject.getSubStudy() == null || !newSubject.getSubStudy())
                 && oldSubject.getSubStudy() != null && oldSubject.getSubStudy()) {
-                visitService.removeSubStudyVisits(oldSubject);
+                visitService.removeSubStudyVisits(subject);
             }
 
-            if (oldSubject.getPrimerVaccinationDate() != null && subject.getPrimerVaccinationDate() == null) {
-                oldSubject.setPrimerVaccinationDate(subject.getPrimerVaccinationDate());
-                visitService.removeVisitsPlannedDates(oldSubject);
-            } else if (!Objects.equals(oldSubject.getPrimerVaccinationDate(), subject.getPrimerVaccinationDate())) {
-                oldSubject.setPrimerVaccinationDate(subject.getPrimerVaccinationDate());
-                visitService.calculateVisitsPlannedDates(oldSubject);
+            if (oldSubject.getPrimerVaccinationDate() != null && newSubject.getPrimerVaccinationDate() == null) {
+                subject.setPrimerVaccinationDate(newSubject.getPrimerVaccinationDate());
+                visitService.removeVisitsPlannedDates(subject);
+            } else if (!Objects.equals(oldSubject.getPrimerVaccinationDate(), newSubject.getPrimerVaccinationDate())) {
+                subject.setPrimerVaccinationDate(newSubject.getPrimerVaccinationDate());
+                visitService.calculateVisitsPlannedDates(subject);
             }
 
-            if (!Objects.equals(oldSubject.getBoosterVaccinationDate(), subject.getBoosterVaccinationDate())) {
-                oldSubject.setPrimerVaccinationDate(subject.getPrimerVaccinationDate());
-                oldSubject.setBoosterVaccinationDate(subject.getBoosterVaccinationDate());
-                visitService.recalculateBoostRelatedVisitsPlannedDates(oldSubject);
+            if (!Objects.equals(oldSubject.getBoosterVaccinationDate(), newSubject.getBoosterVaccinationDate())) {
+                subject.setPrimerVaccinationDate(newSubject.getPrimerVaccinationDate());
+                subject.setBoosterVaccinationDate(newSubject.getBoosterVaccinationDate());
+                visitService.recalculateBoostRelatedVisitsPlannedDates(subject);
             }
         }
     }

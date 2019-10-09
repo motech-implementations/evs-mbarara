@@ -154,7 +154,7 @@ public class EvsEnrollmentServiceImpl implements EvsEnrollmentService {
                 enrollment.setStatus(EnrollmentStatus.ENROLLED);
                 enrollment.setReferenceDate(referenceDate);
 
-                scheduleJobsForEnrollment(enrollment, false);
+                scheduleJobsForEnrollment(enrollment, true);
             }
 
             updateSubjectEnrollments(subjectEnrollments);
@@ -285,10 +285,6 @@ public class EvsEnrollmentServiceImpl implements EvsEnrollmentService {
         checkIfUnenrolled(enrollment, subjectId, campaignName);
 
         if (referenceDate != null) {
-            if (VisitType.PRIME_VACCINATION_DAY.getDisplayValue().equals(campaignName) && !referenceDate.equals(enrollment.getReferenceDate())) {
-                throw new EvsEnrollmentException("Cannot enroll Participant with id: %s to Campaign with name: %s, because reference date cannot be changed for Prime Vaccination Day Campaign",
-                        subjectId, enrollment.getCampaignName());
-            }
             enrollment.setReferenceDate(referenceDate);
         } else if (enrollment.getReferenceDate() == null) {
             throw new EvsEnrollmentException("Cannot enroll Participant with id: %s to Campaign with name: %s, because reference date is empty",
@@ -296,7 +292,7 @@ public class EvsEnrollmentServiceImpl implements EvsEnrollmentService {
         }
 
         enrollment.setStatus(EnrollmentStatus.ENROLLED);
-        scheduleJobsForEnrollment(enrollment, false);
+        scheduleJobsForEnrollment(enrollment, true);
 
         updateSubjectEnrollments(subjectEnrollments);
     }
