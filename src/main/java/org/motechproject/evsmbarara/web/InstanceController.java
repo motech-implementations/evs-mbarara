@@ -81,6 +81,13 @@ public class InstanceController {
         return importCsv(entityId, csvFile);
     }
 
+    @PreAuthorize(EvsMbararaConstants.HAS_IMPORT_SUBJECTS_ROLE)
+    @RequestMapping(value = "/checkSubjectImportPermissions", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<String> checkSubjectImportPermissions() {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PreAuthorize(EvsMbararaConstants.HAS_SUBJECTS_TAB_ROLE)
     @RequestMapping(value = "/instances/Participant", method = RequestMethod.POST)
     @ResponseBody
