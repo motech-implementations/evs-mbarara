@@ -335,7 +335,6 @@
             <Context-Path>evs-mbarara</Context-Path>
             <Export-Package>
               org.motechproject.evsmbarara.constants;version=${project.version},
-              org.motechproject.evsmbarara.client;version=${project.version},
               org.motechproject.evsmbarara.domain;version=${project.version},
               org.motechproject.evsmbarara.domain.enums;version=${project.version},
               org.motechproject.evsmbarara.dto;version=${project.version},
@@ -345,7 +344,6 @@
               org.motechproject.evsmbarara.service.impl;version=${project.version},
               org.motechproject.evsmbarara.template;version=${project.version},
               org.motechproject.evsmbarara.util;version=${project.version},
-              org.motechproject.evsmbarara.validation;version=${project.version},
               org.motechproject.evsmbarara.web;version=${project.version},
               org.motechproject.evsmbarara.web.domain;version=${project.version}
             </Export-Package>
