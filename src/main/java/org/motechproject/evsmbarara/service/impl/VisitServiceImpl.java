@@ -118,11 +118,14 @@ public class VisitServiceImpl implements VisitService {
             }
 
             for (Visit visit : subject.getVisits()) {
-                if (VisitType.BOOST_VACCINATION_DAY.equals(visit.getType())
-                    && subject.getBoosterVaccinationDate() != null) {
-                    visit.setDate(boostVacDate);
+                if (VisitType.BOOST_VACCINATION_DAY.equals(visit.getType())) {
+                    if (subject.getBoosterVaccinationDate() != null) {
+                        visit.setDate(boostVacDate);
 
-                    evsEnrollmentService.completeCampaign(visit);
+                        evsEnrollmentService.completeCampaign(visit);
+                    } else {
+                        visit.setDateProjected(boostVacDate);
+                    }
                 } else if (boostRelatedVisit(visit.getType()) && visit.getDate() == null) {
                     VisitScheduleOffset offset = offsetMap.get(visit.getType());
                     visit.setDateProjected(boostVacDate.plusDays(offset.getTimeOffset()));
