@@ -124,6 +124,7 @@ public class VisitServiceImpl implements VisitService {
 
                         evsEnrollmentService.completeCampaign(visit);
                     } else {
+                        visit.setDate(null);
                         visit.setDateProjected(boostVacDate);
                     }
                 } else if (boostRelatedVisit(visit.getType()) && visit.getDate() == null) {
