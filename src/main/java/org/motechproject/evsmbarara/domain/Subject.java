@@ -60,7 +60,7 @@ public class Subject {
     @JsonSerialize(using = CustomDateSerializer.class)
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @NonEditable
-    @Field(displayName = "Actual Prime Date")
+    @Field
     @Getter
     @Setter
     private LocalDate primerVaccinationDate;
@@ -69,7 +69,7 @@ public class Subject {
     @JsonSerialize(using = CustomDateSerializer.class)
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @NonEditable
-    @Field(displayName = "Actual Booster Date")
+    @Field
     @Getter
     @Setter
     private LocalDate boosterVaccinationDate;
