@@ -22,4 +22,6 @@ public interface EvsEnrollmentService {
     void createEnrollmentOrReenrollCampaign(Visit visit, boolean rollbackCompleted);
 
     void unenrollAndRemoveEnrollment(Visit visit);
+
+    void unenrollAndRemoveEnrollment(Subject subject);
 }

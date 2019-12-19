@@ -1,8 +1,10 @@
 package org.motechproject.evsmbarara.service.impl;
 
 import java.util.Objects;
+import org.apache.commons.lang.StringUtils;
 import org.motechproject.evsmbarara.domain.Subject;
 import org.motechproject.evsmbarara.repository.SubjectDataService;
+import org.motechproject.evsmbarara.service.EvsEnrollmentService;
 import org.motechproject.evsmbarara.service.SubjectService;
 import org.motechproject.evsmbarara.service.VisitService;
 import org.slf4j.Logger;
@@ -24,6 +26,9 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Autowired
     private VisitService visitService;
+
+    @Autowired
+    private EvsEnrollmentService evsEnrollmentService;
 
     @Override
     public Subject findSubjectBySubjectId(String subjectId) {
@@ -82,6 +87,16 @@ public class SubjectServiceImpl implements SubjectService {
                 subject.setPrimerVaccinationDate(newSubject.getPrimerVaccinationDate());
                 subject.setBoosterVaccinationDate(newSubject.getBoosterVaccinationDate());
                 visitService.recalculateBoostRelatedVisitsPlannedDates(subject);
+            }
+
+            if ((StringUtils.isBlank(oldSubject.getPhoneNumber()) || oldSubject.getLanguage() == null)
+                && StringUtils.isNotBlank(newSubject.getPhoneNumber()) && newSubject.getLanguage() != null) {
+                subject.setPrimerVaccinationDate(newSubject.getPrimerVaccinationDate());
+                subject.setBoosterVaccinationDate(newSubject.getBoosterVaccinationDate());
+                evsEnrollmentService.enrollOrReenrollSubject(subject);
+            } else if (StringUtils.isNotBlank(oldSubject.getPhoneNumber()) && oldSubject.getLanguage() != null
+                && (StringUtils.isBlank(newSubject.getPhoneNumber()) || newSubject.getLanguage() == null)) {
+                evsEnrollmentService.unenrollAndRemoveEnrollment(subject);
             }
         }
     }
