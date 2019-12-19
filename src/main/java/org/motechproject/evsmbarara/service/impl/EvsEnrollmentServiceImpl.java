@@ -1,5 +1,6 @@
 package org.motechproject.evsmbarara.service.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 import org.motechproject.commons.date.model.Time;
 import org.motechproject.evsmbarara.domain.Enrollment;
@@ -124,6 +125,11 @@ public class EvsEnrollmentServiceImpl implements EvsEnrollmentService {
     @Override
     public void createEnrollmentOrReenrollCampaign(Visit visit, boolean rollbackCompleted) {
         Subject subject = visit.getSubject();
+
+        if (requiredDataMissing(subject)) {
+            return;
+        }
+
         SubjectEnrollments subjectEnrollments = subjectEnrollmentsDataService.findBySubjectId(subject.getSubjectId());
 
         if (subjectEnrollments == null) {
@@ -164,6 +170,26 @@ public class EvsEnrollmentServiceImpl implements EvsEnrollmentService {
     @Override
     public void unenrollAndRemoveEnrollment(Visit visit) {
         unenrollAndRemoveEnrollment(visit.getSubject().getSubjectId(), visit.getType().getDisplayValue());
+    }
+
+    @Override
+    public void unenrollAndRemoveEnrollment(Subject subject) {
+        SubjectEnrollments subjectEnrollments = subjectEnrollmentsDataService.findBySubjectId(subject.getSubjectId());
+
+        if (subjectEnrollments != null) {
+            try {
+                for (Enrollment enrollment : subjectEnrollments.getEnrollments()) {
+                    if (EnrollmentStatus.ENROLLED.equals(enrollment.getStatus())) {
+                        unscheduleJobsForEnrollment(enrollment);
+                    }
+                    enrollmentDataService.delete(enrollment);
+                }
+
+                subjectEnrollmentsDataService.delete(subjectEnrollments);
+            } catch (EvsEnrollmentException e) {
+                LOGGER.debug(e.getMessage(), e);
+            }
+        }
     }
 
     private void reenrollSubjectWithNewDate(String subjectId, String campaignName, LocalDate date) {
@@ -247,6 +273,10 @@ public class EvsEnrollmentServiceImpl implements EvsEnrollmentService {
         if (referenceDate == null) {
             throw new EvsEnrollmentException("Cannot enroll Participant with id: %s to Campaign with name: %s, because reference date is empty",
                     subject.getSubjectId(), campaignName);
+        }
+
+        if (requiredDataMissing(subject)) {
+            return;
         }
 
         SubjectEnrollments subjectEnrollments = subjectEnrollmentsDataService.findBySubjectId(subject.getSubjectId());
@@ -392,6 +422,14 @@ public class EvsEnrollmentServiceImpl implements EvsEnrollmentService {
             throw new EvsEnrollmentException("Cannot enroll Participant, because no unenrolled Participant exist with id: %s",
                     subjectId);
         }
+    }
+
+    private boolean requiredDataMissing(Subject subject) {
+        if (StringUtils.isBlank(subject.getPhoneNumber())) {
+            return true;
+        }
+
+        return subject.getLanguage() == null;
     }
 
     @Autowired
