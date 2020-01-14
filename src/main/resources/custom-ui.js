@@ -204,6 +204,8 @@ $scope.loadEditValueForm = function (field) {
         return '../evs-mbarara/resources/partials/widgets/field-phone-number.html';
     } else if (field.name === 'visits') {
         return '../evs-mbarara/resources/partials/widgets/field-visits.html';
+    } else if (field.name === 'enrollment') {
+        return '../evs-mbarara/resources/partials/widgets/field-enrollment.html';
     }
 
     if (isPhoneNumberForm) {
