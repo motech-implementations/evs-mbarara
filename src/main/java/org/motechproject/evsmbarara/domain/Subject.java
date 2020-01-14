@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
@@ -18,6 +20,7 @@ import org.motechproject.evsmbarara.util.serializer.CustomDateDeserializer;
 import org.motechproject.evsmbarara.util.serializer.CustomDateSerializer;
 import org.motechproject.evsmbarara.util.serializer.CustomDateTimeDeserializer;
 import org.motechproject.evsmbarara.util.serializer.CustomDateTimeSerializer;
+import org.motechproject.evsmbarara.util.serializer.CustomEnrollmentSerializer;
 import org.motechproject.evsmbarara.util.serializer.CustomVisitListDeserializer;
 import org.motechproject.mds.annotations.Cascade;
 import org.motechproject.mds.annotations.Entity;
@@ -99,6 +102,13 @@ public class Subject {
     @Setter
     private String name;
 
+    @JsonIgnore
+    @NonEditable
+    @Field(displayName = "Enrollment Status")
+    @Persistent(mappedBy = "subject")
+    @Cascade(persist = false, update = false)
+    private SubjectEnrollments enrollment;
+
     /**
      * Motech internal fields
      */
@@ -143,6 +153,17 @@ public class Subject {
         } else {
             this.phoneNumber = phoneNumber;
         }
+    }
+
+    @JsonProperty
+    @JsonSerialize(using = CustomEnrollmentSerializer.class)
+    public SubjectEnrollments getEnrollment() {
+        return enrollment;
+    }
+
+    @JsonIgnore
+    public void setEnrollment(SubjectEnrollments enrollment) {
+        this.enrollment = enrollment;
     }
 
     @Ignore
