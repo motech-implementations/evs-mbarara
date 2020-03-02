@@ -134,6 +134,7 @@
       "evsMbarara.reports.IvrAndSmsStatisticReport.sendDate",
       "evsMbarara.reports.IvrAndSmsStatisticReport.expectedDuration",
       "evsMbarara.reports.IvrAndSmsStatisticReport.timeListenedTo",
+      "evsMbarara.reports.IvrAndSmsStatisticReport.callLength",
       "evsMbarara.reports.IvrAndSmsStatisticReport.messagePercentListened",
       "evsMbarara.reports.IvrAndSmsStatisticReport.receivedDate",
       "evsMbarara.reports.IvrAndSmsStatisticReport.noOfAttempts",
@@ -171,6 +172,10 @@
     }, {
       "name": "timeListenedTo",
       "index": "timeListenedTo",
+      "align": "center"
+    }, {
+      "name": "callLength",
+      "index": "callLength",
       "align": "center"
     }, {
       "name": "messagePercentListened",
