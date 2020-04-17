@@ -13,7 +13,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.motechproject.evsmbarara.service.ExportService;
 import org.motechproject.evsmbarara.service.LookupService;
-import org.motechproject.evsmbarara.template.PdfBasicTemplate;
 import org.motechproject.evsmbarara.util.CustomColumnWidthPdfTableWriter;
 import org.motechproject.evsmbarara.util.ExcelTableWriter;
 import org.motechproject.evsmbarara.util.PdfTableWriter;
@@ -33,10 +32,10 @@ public class ExportServiceImpl implements ExportService {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void exportEntityToPDF(PdfBasicTemplate template, Class<?> entityDtoType, Class<?> entityType,
+    public void exportEntityToPDF(OutputStream outputStream, Class<?> entityDtoType, Class<?> entityType,
                                   Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams)
             throws IOException {
-        PdfTableWriter tableWriter = new CustomColumnWidthPdfTableWriter(template);
+        PdfTableWriter tableWriter = new CustomColumnWidthPdfTableWriter(outputStream);
         exportEntity(entityDtoType, entityType, headerMap, tableWriter, lookup, lookupFields, queryParams);
     }
 

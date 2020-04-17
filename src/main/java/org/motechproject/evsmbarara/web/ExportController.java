@@ -28,8 +28,6 @@ import org.motechproject.evsmbarara.exception.EvsMbararaExportException;
 import org.motechproject.evsmbarara.exception.EvsMbararaLookupException;
 import org.motechproject.evsmbarara.helper.DtoLookupHelper;
 import org.motechproject.evsmbarara.service.ExportService;
-import org.motechproject.evsmbarara.template.PdfBasicTemplate;
-import org.motechproject.evsmbarara.template.PdfExportTemplate;
 import org.motechproject.evsmbarara.util.QueryParamsBuilder;
 import org.motechproject.evsmbarara.web.domain.GridSettings;
 import org.motechproject.mds.query.QueryParams;
@@ -163,9 +161,7 @@ public class ExportController {
 
         try {
             if (PDF_EXPORT_FORMAT.equals(outputFormat)) {
-                PdfBasicTemplate template = new PdfExportTemplate(response.getOutputStream());
-
-                exportService.exportEntityToPDF(template, entityDtoType, entityType, headerMap,
+                exportService.exportEntityToPDF(response.getOutputStream(), entityDtoType, entityType, headerMap,
                         settings.getLookup(), settings.getFields(), queryParams);
             } else if (CSV_EXPORT_FORMAT.equals(outputFormat)) {
                 exportService.exportEntityToCSV(response.getWriter(), entityDtoType, entityType, headerMap,
