@@ -6,6 +6,7 @@ import org.motechproject.evsmbarara.constants.EvsMbararaConstants;
 import org.motechproject.evsmbarara.exception.EvsInitiateCallException;
 import org.motechproject.evsmbarara.helper.IvrCallHelper;
 import org.motechproject.evsmbarara.service.EvsEnrollmentService;
+import org.motechproject.evsmbarara.service.ExportService;
 import org.motechproject.evsmbarara.service.ReportService;
 import org.motechproject.messagecampaign.EventKeys;
 import org.slf4j.Logger;
@@ -26,6 +27,9 @@ public class EvsMbararaEventListener {
 
     @Autowired
     private IvrCallHelper ivrCallHelper;
+
+    @Autowired
+    private ExportService exportService;
 
     @MotechListener(subjects = { EvsMbararaConstants.DAILY_REPORT_EVENT })
     public void generateDailyReport(MotechEvent event) {
@@ -54,5 +58,10 @@ public class EvsMbararaEventListener {
         } catch (EvsInitiateCallException e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    @MotechListener(subjects = { EvsMbararaConstants.CLEAR_EXPORT_TASKS_EVENT })
+    public void clearExportTasks(MotechEvent event) {
+        exportService.cancelAllExportTasks();
     }
 }
