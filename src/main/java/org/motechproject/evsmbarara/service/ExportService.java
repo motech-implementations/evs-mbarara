@@ -1,11 +1,11 @@
 package org.motechproject.evsmbarara.service;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 import org.motechproject.evsmbarara.template.PdfBasicTemplate;
-import org.motechproject.evsmbarara.template.XlsBasicTemplate;
 import org.motechproject.mds.query.QueryParams;
 import org.motechproject.mds.service.impl.csv.writer.TableWriter;
 
@@ -18,7 +18,7 @@ public interface ExportService {
     void exportEntityToCSV(Writer writer, Class<?> entityDtoType, Class<?> entityType, Map<String, String> headerMap,
                            String lookup, String lookupFields, QueryParams queryParams) throws IOException;
 
-    void exportEntityToExcel(XlsBasicTemplate template, Class<?> entityDtoType, Class<?> entityType,
+    void exportEntityToExcel(OutputStream outputStream, Class<?> entityDtoType, Class<?> entityType,
                              Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams)
             throws IOException;
 

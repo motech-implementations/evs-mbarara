@@ -30,8 +30,6 @@ import org.motechproject.evsmbarara.helper.DtoLookupHelper;
 import org.motechproject.evsmbarara.service.ExportService;
 import org.motechproject.evsmbarara.template.PdfBasicTemplate;
 import org.motechproject.evsmbarara.template.PdfExportTemplate;
-import org.motechproject.evsmbarara.template.XlsBasicTemplate;
-import org.motechproject.evsmbarara.template.XlsExportTemplate;
 import org.motechproject.evsmbarara.util.QueryParamsBuilder;
 import org.motechproject.evsmbarara.web.domain.GridSettings;
 import org.motechproject.mds.query.QueryParams;
@@ -173,9 +171,7 @@ public class ExportController {
                 exportService.exportEntityToCSV(response.getWriter(), entityDtoType, entityType, headerMap,
                         settings.getLookup(), settings.getFields(), queryParams);
             } else if (XLS_EXPORT_FORMAT.equals(outputFormat)) {
-                XlsBasicTemplate template = new XlsExportTemplate(response.getOutputStream());
-
-                exportService.exportEntityToExcel(template, entityDtoType, entityType, headerMap,
+                exportService.exportEntityToExcel(response.getOutputStream(), entityDtoType, entityType, headerMap,
                         settings.getLookup(), settings.getFields(), queryParams);
             }
         } catch (IOException | EvsMbararaLookupException | EvsMbararaExportException e) {

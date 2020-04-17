@@ -1,6 +1,7 @@
 package org.motechproject.evsmbarara.service.impl;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -13,7 +14,6 @@ import org.codehaus.jackson.type.TypeReference;
 import org.motechproject.evsmbarara.service.ExportService;
 import org.motechproject.evsmbarara.service.LookupService;
 import org.motechproject.evsmbarara.template.PdfBasicTemplate;
-import org.motechproject.evsmbarara.template.XlsBasicTemplate;
 import org.motechproject.evsmbarara.util.CustomColumnWidthPdfTableWriter;
 import org.motechproject.evsmbarara.util.ExcelTableWriter;
 import org.motechproject.evsmbarara.util.PdfTableWriter;
@@ -49,10 +49,10 @@ public class ExportServiceImpl implements ExportService {
     }
 
     @Override
-    public void exportEntityToExcel(XlsBasicTemplate template, Class<?> entityDtoType, Class<?> entityType,
+    public void exportEntityToExcel(OutputStream outputStream, Class<?> entityDtoType, Class<?> entityType,
                                     Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams)
             throws IOException {
-        ExcelTableWriter tableWriter = new ExcelTableWriter(template);
+        ExcelTableWriter tableWriter = new ExcelTableWriter(outputStream);
         exportEntity(entityDtoType, entityType, headerMap, tableWriter, lookup, lookupFields, queryParams);
     }
 
