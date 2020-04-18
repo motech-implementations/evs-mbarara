@@ -342,7 +342,6 @@
               org.motechproject.evsmbarara.repository;version=${project.version},
               org.motechproject.evsmbarara.service;version=${project.version},
               org.motechproject.evsmbarara.service.impl;version=${project.version},
-              org.motechproject.evsmbarara.template;version=${project.version},
               org.motechproject.evsmbarara.util;version=${project.version},
               org.motechproject.evsmbarara.web;version=${project.version},
               org.motechproject.evsmbarara.web.domain;version=${project.version}
