@@ -22,5 +22,7 @@ public interface LookupService {
 
     <T> long getEntitiesCount(Class<T> entityType, String lookup, String lookupFields);
 
+    <T> long getEntitiesCount(String entityClassName, String lookup, String lookupFields);
+
     List<LookupDto> getAvailableLookups(String entityName);
 }
