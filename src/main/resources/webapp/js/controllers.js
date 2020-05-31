@@ -120,7 +120,7 @@
                     url = url + "?outputFormat=" + $scope.exportFormat;
                     url = url + "&exportRecords=" + $scope.actualExportRecords;
 
-                    if ($scope.checkboxModel.exportWithFilter === true) {
+                    if ($scope.checkboxModel.exportWithLookup === true) {
                         url = url + "&dateFilter=" + $scope.selectedFilter.dateFilter;
 
                         if ($scope.selectedFilter.startDate) {
@@ -185,15 +185,17 @@
         $scope.exportFormat = 'pdf';
         $scope.checkboxModel = {
             exportWithOrder : false,
-            exportWithFilter : true
+            exportWithLookup : true
         };
         $scope.disableExportButton = false;
         $scope.exportTaskId = null;
         $scope.exportProgress = 0;
         $scope.exportStatusTimer = null;
 
+        $scope.showFieldSelect = false;
+
         $scope.exportEntityInstances = function () {
-            $scope.checkboxModel.exportWithFilter = true;
+            $scope.checkboxModel.exportWithLookup = true;
             $('#exportEvsMbararaInstanceModal').modal('show');
         };
 
@@ -293,7 +295,7 @@
             $scope.disableExportButton = true;
             $scope.exportProgress = 0;
 
-            if ($scope.selectedLookup !== undefined && $scope.checkboxModel.exportWithFilter === true) {
+            if ($scope.selectedLookup !== undefined && $scope.checkboxModel.exportWithLookup === true) {
                 url = url + "&lookup=" + (($scope.selectedLookup) ? $scope.selectedLookup.lookupName : "");
                 url = url + "&fields=" + encodeURIComponent(JSON.stringify($scope.lookupBy));
             }
@@ -730,7 +732,7 @@
             url = url + "?outputFormat=" + $scope.exportFormat;
             url = url + "&exportRecords=" + $scope.actualExportRecords;
 
-            if ($scope.checkboxModel.exportWithFilter === true) {
+            if ($scope.checkboxModel.exportWithLookup === true) {
                 url = url + "&dateFilter=" + $scope.selectedFilter.dateFilter;
 
                 if ($scope.selectedFilter.startDate) {
@@ -888,7 +890,7 @@
                 url = url + "&sortDirection=" + sortDirection;
             }
 
-            if ($scope.checkboxModel.exportWithFilter === true) {
+            if ($scope.checkboxModel.exportWithLookup === true) {
                 url = url + "&dateFilter=" + $scope.selectedFilter.dateFilter;
 
                 if ($scope.selectedFilter.startDate) {
